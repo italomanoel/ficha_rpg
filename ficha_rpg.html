@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha de Personagem D&D 5e - nome</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rpg: {
+                            bg: '#12131a',
+                            panel: '#1a1c24',
+                            border: '#3b2f23',
+                            accent: '#d49b43',
+                            accentHover: '#e6ad54',
+                            text: '#e2e8f0',
+                            muted: '#94a3b8',
+                            success: '#10b981',
+                            danger: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Georgia', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #12131a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b2f23;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d49b43;
+        }
+        
+        /* Pulse Animation for rolling dice */
+        @keyframes dice-spin {
+            0% { transform: rotate(0deg) scale(0.8); opacity: 0.5; }
+            50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
+            100% { transform: rotate(360deg) scale(1); opacity: 1; }
+        }
+        .rolling-dice {
+            animation: dice-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="bg-rpg-bg text-rpg-text font-sans min-h-screen pb-12">
+
+    <!-- HEADER / TOPO -->
+    <header class="border-b border-rpg-border bg-rpg-panel py-4 px-6 sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <div class="bg-rpg-border p-2 rounded-lg border border-rpg-accent">
+                    <!-- D20 Icon -->
+                    <svg class="w-8 h-8 text-rpg-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="12 2 2 7 2 17 12 22 22 17 22 7 12 2" />
+                        <polyline points="2 7 12 12 22 7" />
+                        <line x1="12" y1="12" x2="12" y2="22" />
+                        <line x1="12" y1="12" x2="2" y2="17" />
+                        <line x1="12" y1="12" x2="22" y2="17" />
+                        <polyline points="2 17 12 12 22 17" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold font-serif text-rpg-accent tracking-wide uppercase">D&D 5e - Ficha de Personagem</h1>
+                    <p class="text-xs text-rpg-muted">Gerenciador de Ficha Offline e Rolador Integrado</p>
+                </div>
+            </div>
+            
+            <!-- AÇÕES RÁPIDAS -->
+            <div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
+                <button onclick="exportSheet()" class="px-3 py-1.5 bg-rpg-panel border border-rpg-border hover:border-rpg-accent text-xs rounded transition flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    Exportar
+                </button>
+                <button onclick="document.getElementById('importFile').click()" class="px-3 py-1.5 bg-rpg-panel border border-rpg-border hover:border-rpg-accent text-xs rounded transition flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    Importar
+                </button>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="importSheet(event)">
+                <button onclick="resetToDefault()" class="px-3 py-1.5 bg-rpg-danger/20 border border-rpg-danger/40 hover:bg-rpg-danger/40 text-xs text-red-200 rounded transition">
+                    Reiniciar Ficha
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- COLUNA ESQUERDA (DADOS GERAIS, STATUS & ATRIBUTOS) -->
+        <div class="lg:col-span-8 space-y-6">
+            
+            <!-- BLOCO 1: CABEÇALHO DO PERSONAGEM (CAMPOS EDITÁVEIS) -->
+            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 shadow-md grid grid-cols-1 md:grid-cols-3 gap-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-rpg-accent/5 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <!-- Nome e Classe -->
+                <div class="md:col-span-2 space-y-4">
+                    <div>
+                        <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Nome do Personagem</label>
+                        <input type="text" id="char-name" onchange="updateData('name', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent text-rpg-accent font-serif text-2xl font-bold px-3 py-1.5 rounded outline-none transition">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Classe e Nível</label>
+                            <div class="flex gap-1">
+                                <input type="text" id="char-class" onchange="updateData('class', this.value)" class="w-3/4 bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
+                                <input type="number" id="char-level" onchange="updateLevel(this.value)" min="1" max="20" class="w-1/4 bg-rpg-bg border border-rpg-border focus:border-rpg-accent text-center font-bold px-1 py-1.5 rounded outline-none text-sm transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Raça</label>
+                            <input type="text" id="char-race" onchange="updateData('race', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalhes do Jogador -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Jogador</label>
+                        <input type="text" id="char-player" onchange="updateData('player', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Antecedente</label>
+                        <input type="text" id="char-background" onchange="updateData('background', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
+                    </div>
+                    <div>
+                        <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Tendência</label>
+                        <input type="text" id="char-alignment" onchange="updateData('alignment', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
+                    </div>
+                </div>
+            </section>
+
+            <!-- BLOCO 2: COMBAT & STATUS (HP, CA, INICIATIVA, VELOCIDADE) -->
+            <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <!-- CLASSE DE ARMADURA -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-4 text-center flex flex-col justify-between items-center relative group hover:border-rpg-accent transition">
+                    <span class="text-xs uppercase tracking-wider text-rpg-muted">Classe de Armadura (CA)</span>
+                    <div class="my-2 relative flex items-center justify-center">
+                        <!-- Shield SVG background -->
+                        <svg class="w-16 h-16 text-rpg-border group-hover:text-rpg-accent/10 transition" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                        <input type="number" id="combat-ac" onchange="updateData('ac', this.value)" class="absolute text-center text-xl font-bold bg-transparent border-none w-12 h-12 focus:outline-none focus:text-rpg-accent">
+                    </div>
+                    <span class="text-[10px] text-rpg-muted">Toque para alterar</span>
+                </div>
+
+                <!-- INICIATIVA -->
+                <div onclick="rollInitiative()" class="bg-rpg-panel border border-rpg-border rounded-xl p-4 text-center flex flex-col justify-between items-center cursor-pointer group hover:border-rpg-accent transition">
+                    <span class="text-xs uppercase tracking-wider text-rpg-muted">Iniciativa</span>
+                    <div class="my-2 flex flex-col items-center">
+                        <span id="combat-init" class="text-3xl font-black text-rpg-accent group-hover:scale-110 transition duration-200">+1</span>
+                        <span class="text-xs text-rpg-muted mt-1">(Baseado em DES)</span>
+                    </div>
+                    <span class="text-[10px] text-rpg-accent uppercase font-bold tracking-wider group-hover:underline">Clique para Rolar</span>
+                </div>
+
+                <!-- DESLOCAMENTO -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-4 text-center flex flex-col justify-between items-center">
+                    <span class="text-xs uppercase tracking-wider text-rpg-muted">Deslocamento</span>
+                    <div class="my-2 flex items-center justify-center gap-1">
+                        <input type="text" id="combat-speed" onchange="updateData('speed', this.value)" class="text-center text-2xl font-bold bg-transparent border-b border-dashed border-rpg-border w-16 focus:outline-none focus:border-rpg-accent">
+                        <span class="text-sm text-rpg-muted">m</span>
+                    </div>
+                    <span class="text-[10px] text-rpg-muted">Ex: 9m (6 quadrados)</span>
+                </div>
+
+                <!-- BÔNUS DE PROFICIÊNCIA -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-4 text-center flex flex-col justify-between items-center">
+                    <span class="text-xs uppercase tracking-wider text-rpg-muted">Bônus de Proficiência</span>
+                    <div class="my-2">
+                        <span id="prof-bonus" class="text-3xl font-black text-rpg-accent">+2</span>
+                    </div>
+                    <span class="text-[10px] text-rpg-muted">Automático por Nível</span>
+                </div>
+            </section>
+
+            <!-- BLOCO 3: VIDA (HP), DADOS DE VIDA & SALVAMENTO CONTRA A MORTE -->
+            <section class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <!-- PONTOS DE VIDA -->
+                <div class="md:col-span-8 bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
+                    <div class="flex justify-between items-center border-b border-rpg-border pb-2">
+                        <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rpg-danger"></span> Pontos de Vida (PV)
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <button onclick="modifyHP(-5)" class="px-2 py-1 bg-rpg-danger/20 hover:bg-rpg-danger/40 border border-rpg-danger/30 text-xs rounded transition">-5</button>
+                            <button onclick="modifyHP(-1)" class="px-2 py-1 bg-rpg-danger/20 hover:bg-rpg-danger/40 border border-rpg-danger/30 text-xs rounded transition">-1</button>
+                            <span class="text-xs text-rpg-muted font-bold mx-1">Modificadores</span>
+                            <button onclick="modifyHP(1)" class="px-2 py-1 bg-rpg-success/20 hover:bg-rpg-success/40 border border-rpg-success/30 text-xs rounded transition">+1</button>
+                            <button onclick="modifyHP(5)" class="px-2 py-1 bg-rpg-success/20 hover:bg-rpg-success/40 border border-rpg-success/30 text-xs rounded transition">+5</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-rpg-bg border border-rpg-border p-3 rounded-lg text-center">
+                            <label class="text-[10px] text-rpg-muted uppercase block mb-1">Atuais</label>
+                            <input type="number" id="hp-current" onchange="updateHP()" class="w-full text-center text-2xl font-bold bg-transparent focus:outline-none text-rpg-text">
+                        </div>
+                        <div class="bg-rpg-bg border border-rpg-border p-3 rounded-lg text-center">
+                            <label class="text-[10px] text-rpg-muted uppercase block mb-1">Máximos</label>
+                            <input type="number" id="hp-max" onchange="updateHP()" class="w-full text-center text-2xl font-bold bg-transparent focus:outline-none text-rpg-muted">
+                        </div>
+                        <div class="bg-rpg-bg border border-rpg-border p-3 rounded-lg text-center">
+                            <label class="text-[10px] text-rpg-muted uppercase block mb-1">Temporários</label>
+                            <input type="number" id="hp-temp" onchange="updateHP()" class="w-full text-center text-2xl font-bold bg-transparent focus:outline-none text-cyan-400" placeholder="0">
+                        </div>
+                    </div>
+                    <!-- Barra de Vida Visual -->
+                    <div class="w-full bg-rpg-bg h-3 rounded-full overflow-hidden border border-rpg-border">
+                        <div id="hp-bar" class="bg-gradient-to-r from-red-600 to-emerald-500 h-full transition-all duration-300" style="width: 100%;"></div>
+                    </div>
+                </div>
+
+                <!-- DADOS DE VIDA E SALVAMENTO DA MORTE -->
+                <div class="md:col-span-4 bg-rpg-panel border border-rpg-border rounded-xl p-6 flex flex-col justify-between gap-4">
+                    <!-- Dados de Vida -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs uppercase tracking-wider text-rpg-muted">Dados de Vida</span>
+                            <button onclick="rollHitDice()" class="text-xs text-rpg-accent hover:underline">Rolar d12</button>
+                        </div>
+                        <div class="flex items-center gap-2 bg-rpg-bg border border-rpg-border p-2 rounded-lg">
+                            <input type="text" id="combat-hitdice-current" onchange="updateData('hitDiceCurrent', this.value)" class="w-1/2 text-center text-sm font-bold bg-transparent focus:outline-none text-rpg-text" placeholder="Atuais">
+                            <span class="text-rpg-muted">/</span>
+                            <input type="text" id="combat-hitdice-total" onchange="updateData('hitDiceTotal', this.value)" class="w-1/2 text-center text-sm font-bold bg-transparent focus:outline-none text-rpg-muted" placeholder="Total">
+                        </div>
+                    </div>
+
+                    <!-- Testes contra a Morte -->
+                    <div>
+                        <span class="text-xs uppercase tracking-wider text-rpg-muted block mb-2">Resistência à Morte</span>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-emerald-500 font-bold">Sucessos:</span>
+                                <div class="flex gap-1.5">
+                                    <input type="checkbox" id="death-success-1" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-emerald-500">
+                                    <input type="checkbox" id="death-success-2" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-emerald-500">
+                                    <input type="checkbox" id="death-success-3" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-emerald-500">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="text-rose-500 font-bold">Falhas:</span>
+                                <div class="flex gap-1.5">
+                                    <input type="checkbox" id="death-fail-1" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rose-500">
+                                    <input type="checkbox" id="death-fail-2" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rose-500">
+                                    <input type="checkbox" id="death-fail-3" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rose-500">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BLOCO 4: ATRIBUTOS (FOR, DES, CON, INT, SAB, CAR) -->
+            <section class="grid grid-cols-3 sm:grid-cols-6 gap-4">
+                <!-- FORÇA -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">FORÇA</span>
+                    <button onclick="rollStat('Força', 'str')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
+                        <span id="mod-str" class="text-lg font-black text-rpg-accent">+4</span>
+                    </button>
+                    <div class="flex items-center justify-center gap-1 mt-1">
+                        <input type="number" id="val-str" onchange="calcModifier('str')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    </div>
+                </div>
+                <!-- DESTREZA -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">DESTREZA</span>
+                    <button onclick="rollStat('Destreza', 'des')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
+                        <span id="mod-des" class="text-lg font-black text-rpg-accent">+1</span>
+                    </button>
+                    <div class="flex items-center justify-center gap-1 mt-1">
+                        <input type="number" id="val-des" onchange="calcModifier('des')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    </div>
+                </div>
+                <!-- CONSTITUIÇÃO -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">CONSTITUIÇÃO</span>
+                    <button onclick="rollStat('Constituição', 'con')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
+                        <span id="mod-con" class="text-lg font-black text-rpg-accent">+3</span>
+                    </button>
+                    <div class="flex items-center justify-center gap-1 mt-1">
+                        <input type="number" id="val-con" onchange="calcModifier('con')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    </div>
+                </div>
+                <!-- INTELIGÊNCIA -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">INTELIGÊNCIA</span>
+                    <button onclick="rollStat('Inteligência', 'int')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
+                        <span id="mod-int" class="text-lg font-black text-rpg-accent">-1</span>
+                    </button>
+                    <div class="flex items-center justify-center gap-1 mt-1">
+                        <input type="number" id="val-int" onchange="calcModifier('int')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    </div>
+                </div>
+                <!-- SABEDORIA -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">SABEDORIA</span>
+                    <button onclick="rollStat('Sabedoria', 'sab')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
+                        <span id="mod-sab" class="text-lg font-black text-rpg-accent">+0</span>
+                    </button>
+                    <div class="flex items-center justify-center gap-1 mt-1">
+                        <input type="number" id="val-sab" onchange="calcModifier('sab')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    </div>
+                </div>
+                <!-- CARISMA -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">CARISMA</span>
+                    <button onclick="rollStat('Carisma', 'car')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
+                        <span id="mod-car" class="text-lg font-black text-rpg-accent">-1</span>
+                    </button>
+                    <div class="flex items-center justify-center gap-1 mt-1">
+                        <input type="number" id="val-car" onchange="calcModifier('car')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    </div>
+                </div>
+            </section>
+
+            <!-- BLOCO 5: COMBATE / ARMAS & ATAQUES -->
+            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
+                <div class="flex justify-between items-center border-b border-rpg-border pb-2">
+                    <h3 class="font-serif text-lg text-rpg-accent uppercase tracking-wider flex items-center gap-2">
+                        <svg class="w-5 h-5 text-rpg-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        Ataques & Conjurações (Armas)
+                    </h3>
+                    <button onclick="addWeapon()" class="px-3 py-1 bg-rpg-accent text-rpg-bg text-xs font-bold rounded hover:bg-rpg-accentHover transition">+ Nova Arma</button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="border-b border-rpg-border text-rpg-muted text-xs uppercase">
+                                <th class="pb-2 font-bold">Arma / Nome</th>
+                                <th class="pb-2 font-bold text-center">Bônus Atq</th>
+                                <th class="pb-2 font-bold text-center">Dano / Tipo</th>
+                                <th class="pb-2 font-bold text-right">Rolar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weapons-list">
+                            <!-- Inserido dinamicamente por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- BLOCO 6: EQUIPAMENTOS, RIQUEZAS E PROFICIÊNCIAS EXTRA -->
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Inventário e Ouro -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider mb-2 flex items-center gap-2 border-b border-rpg-border pb-2">
+                            Mochila & Inventário
+                        </h3>
+                        <!-- Moedas -->
+                        <div class="grid grid-cols-5 gap-1.5 mb-3">
+                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
+                                <label class="text-[9px] text-rpg-muted font-bold block">PC</label>
+                                <input type="number" id="coin-pc" onchange="updateCoin('pc', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            </div>
+                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
+                                <label class="text-[9px] text-amber-600 font-bold block">PP</label>
+                                <input type="number" id="coin-pp" onchange="updateCoin('pp', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            </div>
+                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
+                                <label class="text-[9px] text-zinc-400 font-bold block">PE</label>
+                                <input type="number" id="coin-pe" onchange="updateCoin('pe', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            </div>
+                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
+                                <label class="text-[9px] text-yellow-500 font-bold block">PO</label>
+                                <input type="number" id="coin-po" onchange="updateCoin('po', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            </div>
+                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
+                                <label class="text-[9px] text-teal-300 font-bold block">PL</label>
+                                <input type="number" id="coin-pl" onchange="updateCoin('pl', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            </div>
+                        </div>
+                        <textarea id="equipment-text" onchange="updateData('equipment', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent rounded p-3 text-xs outline-none h-40 resize-none leading-relaxed" placeholder="Escreva os itens da mochila, poções, armadura, itens mágicos..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Outras Proficiências & Idiomas -->
+                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
+                    <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider flex items-center gap-2 border-b border-rpg-border pb-2">
+                        Proficiências & Idiomas
+                    </h3>
+                    <textarea id="prof-langs-text" onchange="updateData('profAndLangs', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent rounded p-3 text-xs outline-none h-48 resize-none leading-relaxed" placeholder="Ex: Idioma Anão, Comum. Proficiência em Armaduras leves, médias, escudos e armas marciais..."></textarea>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- COLUNA DIREITA (TESTES DE RESISTÊNCIA, PERÍCIAS & ROLLER LOG) -->
+        <div class="lg:col-span-4 space-y-6">
+            
+            <!-- ROLLER LOG (DADO DE D20 INTERATIVO) -->
+            <section class="bg-rpg-panel border-2 border-rpg-accent rounded-xl p-6 shadow-xl relative overflow-hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-serif text-base font-bold text-rpg-accent uppercase tracking-wider flex items-center gap-2">
+                        <span class="inline-block w-2.5 h-2.5 rounded-full bg-rpg-accent animate-pulse"></span>
+                        Rolador de Dados
+                    </h3>
+                    <button onclick="clearRollLog()" class="text-[10px] uppercase text-rpg-muted hover:text-rpg-accent">Limpar</button>
+                </div>
+                
+                <!-- Display do Dado Gigante -->
+                <div class="bg-rpg-bg border border-rpg-border rounded-xl p-6 text-center flex flex-col justify-center items-center relative min-h-[140px] mb-4">
+                    <div id="dice-container" class="relative z-10">
+                        <div id="dice-graphic" class="w-16 h-16 text-rpg-accent flex items-center justify-center relative mb-1 mx-auto">
+                            <!-- SVG d20 background -->
+                            <svg class="w-full h-full absolute top-0 left-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" />
+                                <polygon points="12 2 12 22" />
+                                <polygon points="2 8.5 22 8.5" />
+                                <polygon points="2 15.5 22 15.5" />
+                                <polygon points="12 2 2 15.5" />
+                                <polygon points="12 2 22 15.5" />
+                                <polygon points="12 22 2 8.5" />
+                                <polygon points="12 22 22 8.5" />
+                            </svg>
+                            <span id="dice-result-val" class="text-2xl font-black relative z-10 pt-1 text-rpg-accent">-</span>
+                        </div>
+                        <p id="dice-label" class="text-[10px] text-rpg-muted uppercase font-bold tracking-wider">-</p>
+                    </div>
+                    <div id="dice-roll-total" class="text-3xl font-black mt-2 hidden text-emerald-400">Total: 18</div>
+                    <div id="dice-formula" class="text-xs text-rpg-muted italic mt-0.5 hidden">1d20 + 4 (Força)</div>
+                </div>
+
+                <!-- Histórico das Últimas Rolagens -->
+                <div class="space-y-2">
+                    <span class="text-[10px] text-rpg-muted uppercase font-bold tracking-wider">Histórico Recente</span>
+                    <div id="roll-log-list" class="max-h-40 overflow-y-auto space-y-1.5 pr-1 text-xs">
+                        <div class="text-rpg-muted italic text-center py-4">Nenhuma rolagem feita ainda.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SALVAMENTOS (TESTES DE RESISTÊNCIA) -->
+            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
+                <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider border-b border-rpg-border pb-2 flex justify-between items-center">
+                    <span>Testes de Resistência</span>
+                    <span class="text-[10px] text-rpg-muted lowercase font-normal">Marque se for proficiente</span>
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- STR, DEX, CON -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
+                            <div class="flex items-center gap-1.5">
+                                <input type="checkbox" id="save-prof-str" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
+                                <button onclick="rollSave('Força', 'str')" class="text-xs font-bold text-left group-hover:text-rpg-accent">FOR</button>
+                            </div>
+                            <span id="save-val-str" class="text-xs font-bold font-serif text-rpg-accent">+4</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
+                            <div class="flex items-center gap-1.5">
+                                <input type="checkbox" id="save-prof-des" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
+                                <button onclick="rollSave('Destreza', 'des')" class="text-xs font-bold text-left group-hover:text-rpg-accent">DES</button>
+                            </div>
+                            <span id="save-val-des" class="text-xs font-bold font-serif text-rpg-accent">+1</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
+                            <div class="flex items-center gap-1.5">
+                                <input type="checkbox" id="save-prof-con" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
+                                <button onclick="rollSave('Constituição', 'con')" class="text-xs font-bold text-left group-hover:text-rpg-accent">CON</button>
+                            </div>
+                            <span id="save-val-con" class="text-xs font-bold font-serif text-rpg-accent">+3</span>
+                        </div>
+                    </div>
+                    <!-- INT, WIS, CHA -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
+                            <div class="flex items-center gap-1.5">
+                                <input type="checkbox" id="save-prof-int" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
+                                <button onclick="rollSave('Inteligência', 'int')" class="text-xs font-bold text-left group-hover:text-rpg-accent">INT</button>
+                            </div>
+                            <span id="save-val-int" class="text-xs font-bold font-serif text-rpg-accent">-1</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
+                            <div class="flex items-center gap-1.5">
+                                <input type="checkbox" id="save-prof-sab" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
+                                <button onclick="rollSave('Sabedoria', 'sab')" class="text-xs font-bold text-left group-hover:text-rpg-accent">SAB</button>
+                            </div>
+                            <span id="save-val-sab" class="text-xs font-bold font-serif text-rpg-accent">+0</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
+                            <div class="flex items-center gap-1.5">
+                                <input type="checkbox" id="save-prof-car" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
+                                <button onclick="rollSave('Carisma', 'car')" class="text-xs font-bold text-left group-hover:text-rpg-accent">CAR</button>
+                            </div>
+                            <span id="save-val-car" class="text-xs font-bold font-serif text-rpg-accent">-1</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PERÍCIAS -->
+            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
+                <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider border-b border-rpg-border pb-2 flex justify-between items-center">
+                    <span>Perícias (Skills)</span>
+                    <span class="text-[10px] text-rpg-muted">Toque no nome para Rolar</span>
+                </h3>
+                <div class="space-y-2 max-h-96 overflow-y-auto pr-2" id="skills-list">
+                    <!-- Inserido dinamicamente via JS -->
+                </div>
+            </section>
+
+            <!-- BLOCO DE CARACTERÍSTICAS & HABILIDADES ESPECIAIS (FÚRIA, RESISTÊNCIA ANÃ) -->
+            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
+                <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider border-b border-rpg-border pb-2 flex items-center gap-2">
+                    Características & Traços
+                </h3>
+                <textarea id="features-text" onchange="updateData('features', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent rounded p-3 text-xs outline-none h-56 resize-none leading-relaxed" placeholder="Adicione habilidades especiais como: Fúria de Bárbaro, Sentido de Perigo, Resiliência Anã, Visão no Escuro, etc."></textarea>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- NOTIFICAÇÃO DO DADO (TOAST FLUTUANTE EM DISPOSITIVOS MÓVEIS) -->
+    <div id="dice-toast" class="fixed bottom-6 right-6 bg-rpg-panel border-2 border-rpg-accent rounded-lg p-4 shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm hidden">
+        <div class="flex items-center gap-3">
+            <div class="bg-rpg-accent text-rpg-bg font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner" id="toast-dice-result">
+                20
+            </div>
+            <div>
+                <h4 class="font-bold text-xs uppercase tracking-wider text-rpg-muted" id="toast-dice-title">Rolagem de d20</h4>
+                <p class="text-sm font-black text-emerald-400" id="toast-dice-total">Total: 24</p>
+                <p class="text-[HGHH10px] text-rpg-muted italic" id="toast-dice-formula">20 + 4 (Força)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CODE LOGIC (JS) -->
+    <script>
+        // --- 1. CONFIGURAÇÕES & DADOS DO PERSONAGEM (D&D 5E TEMPLATE COM DADOS DO USUÁRIO) ---
+        const DEFAULT_SHEET = {
+            name: "nome do personagem",
+            class: "Bárbaro",
+            level: 1,
+            race: "Anão",
+            player: "Nome do Jogador",
+            background: "Herói do Povo",
+            alignment: "Caótico e Neutro",
+            ac: 15, // Armadura natural/bárbara ou escudos
+            speed: "9",
+            hitDiceCurrent: "1",
+            hitDiceTotal: "1d12",
+            hp: {
+                current: 15,
+                max: 15,
+                temp: 0
+            },
+            deathSaves: {
+                successes: [false, false, false],
+                failures: [false, false, false]
+            },
+            stats: {
+                str: 18,
+                des: 12,
+                con: 16,
+                int: 8,
+                sab: 10,
+                car: 8
+            },
+            saveProfs: {
+                str: true, // Bárbaro tem proficiência em Força e Constituição
+                des: false,
+                con: true,
+                int: false,
+                sab: false,
+                car: false
+            },
+            skills: {
+                acrobatics: { prof: false, stat: 'des', name: "Acrobacia" },
+                animal_handling: { prof: false, stat: 'sab', name: "Adestrar Animais" },
+                arcana: { prof: false, stat: 'int', name: "Arcanismo" },
+                athletics: { prof: true, stat: 'str', name: "Atletismo" },
+                deception: { prof: false, stat: 'car', name: "Enganação" },
+                history: { prof: false, stat: 'int', name: "História" },
+                insight: { prof: false, stat: 'sab', name: "Intuição" },
+                intimidation: { prof: true, stat: 'car', name: "Intimidação" },
+                investigation: { prof: false, stat: 'int', name: "Investigação" },
+                medicine: { prof: false, stat: 'sab', name: "Medicina" },
+                nature: { prof: false, stat: 'int', name: "Natureza" },
+                perception: { prof: false, stat: 'sab', name: "Percepção" },
+                performance: { prof: false, stat: 'car', name: "Atuação" },
+                persuasion: { prof: false, stat: 'car', name: "Persuasão" },
+                religion: { prof: false, stat: 'int', name: "Religião" },
+                sleight_of_hand: { prof: false, stat: 'des', name: "Prestidigitação" },
+                stealth: { prof: false, stat: 'des', name: "Furtividade" },
+                survival: { prof: true, stat: 'sab', name: "Sobrevivência" }
+            },
+            weapons: [
+                { name: "Machado de Batalha de Uma Mão", bonusAtk: "+6", damage: "1d8+4", damageType: "Cortante", id: 1 },
+                { name: "Machadinha (Arremessável)", bonusAtk: "+6", damage: "1d6+4", damageType: "Cortante", id: 2 }
+            ],
+            equipment: "Armadura de Couro Batido, Machado de Batalha, 2x Machadinhas, Mochila de Explorador, Rações de Viagem, Saco de Dormir.",
+            profAndLangs: "Idiomas: Comum, Anão.\nProficiência em Ferramentas de Pedreiro.\nArmas Simples e Marciais.",
+            features: "FÚRIA (2x ao dia):\nNo seu turno, você pode entrar em fúria como uma ação bônus. Vantagem em testes de Força e salvamentos de Força. Bônus de dano de Fúria (+2). Resistência a dano de concussão, cortante e perfurante.\n\nDEFESA SEM ARMADURA:\nQuando não estiver usando armadura, sua Classe de Armadura é 10 + Mod DES + Mod CON.\n\nRESILIÊNCIA ANÃ:\nVantagem contra venenos e resistência a dano de veneno.",
+            coins: {
+                pc: 0,
+                pp: 0,
+                pe: 0,
+                po: 15,
+                pl: 0
+            }
+        };
+
+        let currentSheet = {};
+
+        // --- 2. WEB AUDIO API - EFEITO DE SOM DE DADO SINTETIZADO ---
+        function playDiceSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                
+                // Simula 3 a 4 pequenos barulhos de chacoalhar do dado
+                for (let i = 0; i < 4; i++) {
+                    const delay = i * 0.12;
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(100 + Math.random() * 80, ctx.currentTime + delay);
+                    osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + delay + 0.08);
+                    
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime + delay);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + 0.08);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + delay);
+                    osc.stop(ctx.currentTime + delay + 0.08);
+                }
+            } catch (e) {
+                console.log("Audio not allowed / error: ", e);
+            }
+        }
+
+        // --- 3. INICIALIZAÇÃO DA FICHA ---
+        window.onload = function() {
+            loadSheet();
+        }
+
+        function loadSheet() {
+            // const saved = localStorage.getItem('rpg_character_sheet_data');
+            const saved = sessionStorage.getItem('rpg_character_sheet_data');
+            if (saved) {
+                try {
+                    currentSheet = JSON.parse(saved);
+                    // Garantir compatibilidade com novos campos se existirem
+                    currentSheet = { ...DEFAULT_SHEET, ...currentSheet };
+                } catch (e) {
+                    currentSheet = JSON.parse(JSON.stringify(DEFAULT_SHEET));
+                }
+            } else {
+                currentSheet = JSON.parse(JSON.stringify(DEFAULT_SHEET));
+            }
+            renderAll();
+        }
+
+        function saveSheetToStorage() {
+            // localStorage.setItem('rpg_character_sheet_data', JSON.stringify(currentSheet));
+            sessionStorage.setItem('rpg_character_sheet_data', JSON.stringify(currentSheet));
+        }
+
+        // --- 4. RENDERIZAÇÃO DA PÁGINA COM DADOS ---
+        function renderAll() {
+            // Inputs Textos Gerais
+            document.getElementById('char-name').value = currentSheet.name;
+            document.getElementById('char-class').value = currentSheet.class;
+            document.getElementById('char-level').value = currentSheet.level;
+            document.getElementById('char-race').value = currentSheet.race;
+            document.getElementById('char-player').value = currentSheet.player;
+            document.getElementById('char-background').value = currentSheet.background;
+            document.getElementById('char-alignment').value = currentSheet.alignment;
+
+            // Combat stats
+            document.getElementById('combat-ac').value = currentSheet.ac;
+            document.getElementById('combat-speed').value = currentSheet.speed;
+            document.getElementById('combat-hitdice-current').value = currentSheet.hitDiceCurrent;
+            document.getElementById('combat-hitdice-total').value = currentSheet.hitDiceTotal;
+
+            // Atributos
+            for (let stat in currentSheet.stats) {
+                document.getElementById(`val-${stat}`).value = currentSheet.stats[stat];
+            }
+
+            // Moedas
+            document.getElementById('coin-pc').value = currentSheet.coins.pc;
+            document.getElementById('coin-pp').value = currentSheet.coins.pp;
+            document.getElementById('coin-pe').value = currentSheet.coins.pe;
+            document.getElementById('coin-po').value = currentSheet.coins.po;
+            document.getElementById('coin-pl').value = currentSheet.coins.pl;
+
+            // Textareas
+            document.getElementById('equipment-text').value = currentSheet.equipment;
+            document.getElementById('prof-langs-text').value = currentSheet.profAndLangs;
+            document.getElementById('features-text').value = currentSheet.features;
+
+            // Checkbox Saves
+            for (let save in currentSheet.saveProfs) {
+                document.getElementById(`save-prof-${save}`).checked = currentSheet.saveProfs[save];
+            }
+
+            // Vida
+            document.getElementById('hp-current').value = currentSheet.hp.current;
+            document.getElementById('hp-max').value = currentSheet.hp.max;
+            document.getElementById('hp-temp').value = currentSheet.hp.temp || 0;
+
+            // Death saves
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`death-success-${i}`).checked = currentSheet.deathSaves.successes[i-1];
+                document.getElementById(`death-fail-${i}`).checked = currentSheet.deathSaves.failures[i-1];
+            }
+
+            // Atualizar os cálculos dinâmicos dependentes
+            recalculateAll();
+        }
+
+        function recalculateAll() {
+            // Nível e Proficiência
+            const level = parseInt(currentSheet.level) || 1;
+            const profBonus = Math.ceil(level / 4) + 1;
+            document.getElementById('prof-bonus').textContent = `+${profBonus}`;
+
+            // Calcular modificadores
+            const mods = {};
+            for (let stat in currentSheet.stats) {
+                const val = parseInt(currentSheet.stats[stat]) || 10;
+                const mod = Math.floor((val - 10) / 2);
+                mods[stat] = mod;
+                
+                // Renderizar mod de Atributo
+                const sign = mod >= 0 ? '+' : '';
+                document.getElementById(`mod-${stat}`).textContent = `${sign}${mod}`;
+            }
+
+            // Atualizar Iniciativa baseada em DES
+            const initSign = mods.des >= 0 ? '+' : '';
+            document.getElementById('combat-init').textContent = `${initSign}${mods.des}`;
+
+            // Atualizar Salvamentos (Testes de Resistência)
+            for (let stat in currentSheet.saveProfs) {
+                let totalSave = mods[stat];
+                if (currentSheet.saveProfs[stat]) {
+                    totalSave += profBonus;
+                }
+                const saveSign = totalSave >= 0 ? '+' : '';
+                document.getElementById(`save-val-${stat}`).textContent = `${saveSign}${totalSave}`;
+            }
+
+            // Barra de vida
+            const currentHP = parseInt(currentSheet.hp.current) || 0;
+            const maxHP = parseInt(currentSheet.hp.max) || 1;
+            const tempHP = parseInt(currentSheet.hp.temp) || 0;
+            const percent = Math.min(100, Math.max(0, ((currentHP + tempHP) / maxHP) * 100));
+            document.getElementById('hp-bar').style.width = `${percent}%`;
+
+            // Atualizar Lista de Perícias
+            renderSkills(mods, profBonus);
+
+            // Atualizar Lista de Armas
+            renderWeapons();
+        }
+
+        // --- 5. RENDER DINÂMICO DE PERÍCIAS ---
+        function renderSkills(mods, profBonus) {
+            const container = document.getElementById('skills-list');
+            container.innerHTML = '';
+
+            for (let skillKey in currentSheet.skills) {
+                const skill = currentSheet.skills[skillKey];
+                const isProf = skill.prof;
+                const statMod = mods[skill.stat] || 0;
+                const totalBonus = statMod + (isProf ? profBonus : 0);
+                const sign = totalBonus >= 0 ? '+' : '';
+
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40 transition text-xs";
+                div.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" onchange="toggleSkillProf('${skillKey}')" ${isProf ? 'checked' : ''} class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
+                        <button onclick="rollSkill('${skill.name}', ${totalBonus}, '${skill.stat.toUpperCase()}')" class="font-semibold text-left group-hover:text-rpg-accent transition">
+                            ${skill.name} <span class="text-[9px] text-rpg-muted font-normal">(${skill.stat.toUpperCase()})</span>
+                        </button>
+                    </div>
+                    <span class="font-serif font-bold text-rpg-accent">${sign}${totalBonus}</span>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        // --- 6. RENDER DINÂMICO DE ARMAS / ATAQUES ---
+        function renderWeapons() {
+            const container = document.getElementById('weapons-list');
+            container.innerHTML = '';
+
+            if (currentSheet.weapons.length === 0) {
+                container.innerHTML = `<tr><td colspan="4" class="text-center text-rpg-muted py-4 italic">Nenhuma arma adicionada.</td></tr>`;
+                return;
+            }
+
+            currentSheet.weapons.forEach((weapon, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-rpg-border/50 hover:bg-rpg-bg/30 transition";
+                tr.innerHTML = `
+                    <td class="py-2.5">
+                        <div class="flex items-center gap-2">
+                            <button onclick="deleteWeapon(${index})" class="text-xs text-rpg-danger hover:underline">✕</button>
+                            <input type="text" value="${weapon.name}" onchange="editWeapon(${index}, 'name', this.value)" class="bg-transparent border-b border-transparent hover:border-rpg-border focus:border-rpg-accent text-rpg-text focus:outline-none w-full text-xs">
+                        </div>
+                    </td>
+                    <td class="py-2.5 text-center">
+                        <input type="text" value="${weapon.bonusAtk}" onchange="editWeapon(${index}, 'bonusAtk', this.value)" class="bg-transparent text-center border-b border-transparent hover:border-rpg-border focus:border-rpg-accent text-rpg-text focus:outline-none w-12 text-xs">
+                    </td>
+                    <td class="py-2.5 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <input type="text" value="${weapon.damage}" onchange="editWeapon(${index}, 'damage', this.value)" class="bg-transparent text-center border-b border-transparent hover:border-rpg-border focus:border-rpg-accent text-rpg-text focus:outline-none w-16 text-xs font-bold">
+                            <input type="text" value="${weapon.damageType}" onchange="editWeapon(${index}, 'damageType', this.value)" class="bg-transparent text-center border-b border-transparent hover:border-rpg-border focus:border-rpg-accent text-rpg-muted focus:outline-none w-16 text-[10px]">
+                        </div>
+                    </td>
+                    <td class="py-2.5 text-right">
+                        <div class="flex justify-end gap-1.5">
+                            <button onclick="rollWeaponAtk('${weapon.name}', '${weapon.bonusAtk}')" class="px-2 py-1 bg-rpg-bg hover:bg-rpg-accent hover:text-rpg-bg text-[10px] rounded font-bold border border-rpg-border transition">Atacar</button>
+                            <button onclick="rollWeaponDamage('${weapon.name}', '${weapon.damage}')" class="px-2 py-1 bg-rpg-bg hover:bg-emerald-600 hover:text-white text-[10px] rounded font-bold border border-rpg-border transition">Dano</button>
+                        </div>
+                    </td>
+                `;
+                container.appendChild(tr);
+            });
+        }
+
+        // --- 7. MÉTODOS DE EDIÇÃO DE ESTADO ---
+        function updateData(key, value) {
+            currentSheet[key] = value;
+            saveSheetToStorage();
+        }
+
+        function updateLevel(val) {
+            currentSheet.level = parseInt(val) || 1;
+            saveSheetToStorage();
+            recalculateAll();
+        }
+
+        function updateCoin(key, val) {
+            currentSheet.coins[key] = parseInt(val) || 0;
+            saveSheetToStorage();
+        }
+
+        function calcModifier(stat) {
+            const val = parseInt(document.getElementById(`val-${stat}`).value) || 10;
+            currentSheet.stats[stat] = val;
+            saveSheetToStorage();
+            recalculateAll();
+        }
+
+        function toggleSkillProf(skillKey) {
+            currentSheet.skills[skillKey].prof = !currentSheet.skills[skillKey].prof;
+            saveSheetToStorage();
+            recalculateAll();
+        }
+
+        function updateSavesAndSkills() {
+            for (let stat in currentSheet.saveProfs) {
+                currentSheet.saveProfs[stat] = document.getElementById(`save-prof-${stat}`).checked;
+            }
+            saveSheetToStorage();
+            recalculateAll();
+        }
+
+        function updateHP() {
+            currentSheet.hp.current = parseInt(document.getElementById('hp-current').value) || 0;
+            currentSheet.hp.max = parseInt(document.getElementById('hp-max').value) || 1;
+            currentSheet.hp.temp = parseInt(document.getElementById('hp-temp').value) || 0;
+            saveSheetToStorage();
+            recalculateAll();
+        }
+
+        function modifyHP(amount) {
+            const current = parseInt(document.getElementById('hp-current').value) || 0;
+            const max = parseInt(document.getElementById('hp-max').value) || 1;
+            let newVal = current + amount;
+            if (newVal > max) newVal = max;
+            if (newVal < 0) newVal = 0;
+            
+            document.getElementById('hp-current').value = newVal;
+            updateHP();
+        }
+
+        function updateDeathSaves() {
+            for (let i = 1; i <= 3; i++) {
+                currentSheet.deathSaves.successes[i-1] = document.getElementById(`death-success-${i}`).checked;
+                currentSheet.deathSaves.failures[i-1] = document.getElementById(`death-fail-${i}`).checked;
+            }
+            saveSheetToStorage();
+        }
+
+        function editWeapon(index, field, value) {
+            currentSheet.weapons[index][field] = value;
+            saveSheetToStorage();
+        }
+
+        function addWeapon() {
+            currentSheet.weapons.push({
+                name: "Nova Arma",
+                bonusAtk: "+0",
+                damage: "1d6",
+                damageType: "Dano",
+                id: Date.now()
+            });
+            saveSheetToStorage();
+            recalculateAll();
+        }
+
+        function deleteWeapon(index) {
+            currentSheet.weapons.splice(index, 1);
+            saveSheetToStorage();
+            recalculateAll();
+        }
+
+        // --- 8. SISTEMA DE ROLAGEM DE DADOS (COM SONS & ANIMAÇÃO) ---
+        let rollHistory = [];
+
+        function executeRollAnimation(label, modifier, callback) {
+            playDiceSound();
+            const diceGraphic = document.getElementById('dice-graphic');
+            const resultVal = document.getElementById('dice-result-val');
+            const diceLabel = document.getElementById('dice-label');
+            
+            diceGraphic.classList.remove('rolling-dice');
+            void diceGraphic.offsetWidth; // Trigger reflow
+            diceGraphic.classList.add('rolling-dice');
+
+            let spins = 0;
+            const interval = setInterval(() => {
+                resultVal.textContent = Math.floor(Math.random() * 20) + 1;
+                spins++;
+                if (spins > 6) {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 70);
+        }
+
+        function addLogEntry(title, formula, total, naturalRoll) {
+            const list = document.getElementById('roll-log-list');
+            if (rollHistory.length === 0) {
+                list.innerHTML = '';
+            }
+
+            const timestamp = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            const natClass = naturalRoll === 20 ? 'text-emerald-400 font-extrabold' : (naturalRoll === 1 ? 'text-red-500 font-extrabold' : 'text-rpg-muted');
+            const bonusText = naturalRoll === 20 ? ' (Crítico!)' : (naturalRoll === 1 ? ' (Falha Crítica!)' : '');
+
+            const entryHtml = `
+                <div class="bg-rpg-bg p-2 rounded border border-rpg-border/60 hover:border-rpg-accent/30 transition text-xs flex flex-col justify-between">
+                    <div class="flex justify-between items-center text-[10px]">
+                        <span class="font-bold text-rpg-accent uppercase">${title}</span>
+                        <span class="text-[9px] text-rpg-muted">${timestamp}</span>
+                    </div>
+                    <div class="flex justify-between items-end mt-1">
+                        <span class="text-[10px] text-rpg-muted italic">${formula} <span class="${natClass}">[d20: ${naturalRoll}${bonusText}]</span></span>
+                        <span class="text-sm font-black text-emerald-400">${total}</span>
+                    </div>
+                </div>
+            `;
+            
+            list.insertAdjacentHTML('afterbegin', entryHtml);
+            rollHistory.unshift({ title, formula, total, naturalRoll });
+
+            // Mostrar toast flutuante (Mobile Friendly)
+            showToast(title, total, formula, naturalRoll);
+        }
+
+        function showToast(title, total, formula, naturalRoll) {
+            const toast = document.getElementById('dice-toast');
+            const tResult = document.getElementById('toast-dice-result');
+            const tTitle = document.getElementById('toast-dice-title');
+            const tTotal = document.getElementById('toast-dice-total');
+            const tFormula = document.getElementById('toast-dice-formula');
+
+            tResult.textContent = naturalRoll;
+            tTitle.textContent = title;
+            tTotal.textContent = `Total: ${total}`;
+            tFormula.textContent = formula;
+
+            // Cores baseadas em crítico
+            if (naturalRoll === 20) {
+                tResult.className = "bg-emerald-500 text-rpg-bg font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner animate-bounce";
+            } else if (naturalRoll === 1) {
+                tResult.className = "bg-rose-500 text-white font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner";
+            } else {
+                tResult.className = "bg-rpg-accent text-rpg-bg font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner";
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-20');
+            }, 50);
+
+            // Hide after 4 seconds
+            clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-20');
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 4000);
+        }
+
+        function rollStat(statName, statKey) {
+            const val = parseInt(currentSheet.stats[statKey]) || 10;
+            const mod = Math.floor((val - 10) / 2);
+            executeRollAnimation(statName, mod, () => {
+                const roll = Math.floor(Math.random() * 20) + 1;
+                const total = roll + mod;
+                const sign = mod >= 0 ? '+' : '';
+                
+                document.getElementById('dice-result-val').textContent = roll;
+                document.getElementById('dice-label').textContent = statName;
+                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+                document.getElementById('dice-roll-total').classList.remove('hidden');
+                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${mod} (${statName})`;
+                document.getElementById('dice-formula').classList.remove('hidden');
+
+                addLogEntry(`Atributo: ${statName}`, `1d20 ${sign}${mod}`, total, roll);
+            });
+        }
+
+        function rollSave(statName, statKey) {
+            const val = parseInt(currentSheet.stats[statKey]) || 10;
+            const mod = Math.floor((val - 10) / 2);
+            const level = parseInt(currentSheet.level) || 1;
+            const profBonus = Math.ceil(level / 4) + 1;
+            const hasProf = currentSheet.saveProfs[statKey];
+            
+            const totalMod = mod + (hasProf ? profBonus : 0);
+
+            executeRollAnimation(`Salvamento ${statName}`, totalMod, () => {
+                const roll = Math.floor(Math.random() * 20) + 1;
+                const total = roll + totalMod;
+                const sign = totalMod >= 0 ? '+' : '';
+
+                document.getElementById('dice-result-val').textContent = roll;
+                document.getElementById('dice-label').textContent = `Salvar ${statName}`;
+                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+                document.getElementById('dice-roll-total').classList.remove('hidden');
+                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${totalMod}`;
+                document.getElementById('dice-formula').classList.remove('hidden');
+
+                addLogEntry(`Salvamento: ${statName}`, `1d20 ${sign}${totalMod}`, total, roll);
+            });
+        }
+
+        function rollSkill(skillName, bonusValue, attr) {
+            executeRollAnimation(`Perícia ${skillName}`, bonusValue, () => {
+                const roll = Math.floor(Math.random() * 20) + 1;
+                const total = roll + bonusValue;
+                const sign = bonusValue >= 0 ? '+' : '';
+
+                document.getElementById('dice-result-val').textContent = roll;
+                document.getElementById('dice-label').textContent = skillName;
+                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+                document.getElementById('dice-roll-total').classList.remove('hidden');
+                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${bonusValue} (${attr})`;
+                document.getElementById('dice-formula').classList.remove('hidden');
+
+                addLogEntry(`Perícia: ${skillName}`, `1d20 ${sign}${bonusValue}`, total, roll);
+            });
+        }
+
+        function rollInitiative() {
+            const val = parseInt(currentSheet.stats.des) || 10;
+            const mod = Math.floor((val - 10) / 2);
+            executeRollAnimation("Iniciativa", mod, () => {
+                const roll = Math.floor(Math.random() * 20) + 1;
+                const total = roll + mod;
+                const sign = mod >= 0 ? '+' : '';
+
+                document.getElementById('dice-result-val').textContent = roll;
+                document.getElementById('dice-label').textContent = "Iniciativa";
+                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+                document.getElementById('dice-roll-total').classList.remove('hidden');
+                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${mod} (Iniciativa)`;
+                document.getElementById('dice-formula').classList.remove('hidden');
+
+                addLogEntry("Iniciativa", `1d20 ${sign}${mod}`, total, roll);
+            });
+        }
+
+        function rollHitDice() {
+            playDiceSound();
+            const diceGraphic = document.getElementById('dice-graphic');
+            const resultVal = document.getElementById('dice-result-val');
+            
+            diceGraphic.classList.remove('rolling-dice');
+            void diceGraphic.offsetWidth;
+            diceGraphic.classList.add('rolling-dice');
+
+            let spins = 0;
+            const interval = setInterval(() => {
+                resultVal.textContent = Math.floor(Math.random() * 12) + 1;
+                spins++;
+                if (spins > 6) {
+                    clearInterval(interval);
+                    const roll = Math.floor(Math.random() * 12) + 1;
+                    const valCon = parseInt(currentSheet.stats.con) || 10;
+                    const modCon = Math.floor((valCon - 10) / 2);
+                    const total = roll + modCon;
+
+                    document.getElementById('dice-result-val').textContent = roll;
+                    document.getElementById('dice-label').textContent = "Dados de Vida (d12)";
+                    document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+                    document.getElementById('dice-roll-total').classList.remove('hidden');
+                    document.getElementById('dice-formula').textContent = `1d12 + ${modCon} (CON)`;
+                    document.getElementById('dice-formula').classList.remove('hidden');
+
+                    addLogEntry("Dado de Vida (d12)", `1d12 + ${modCon}`, total, roll);
+                }
+            }, 70);
+        }
+
+        function rollWeaponAtk(weaponName, bonusText) {
+            // Analisa o bônus de ataque (Ex: "+6" ou "-1" ou "6")
+            const bonus = parseInt(bonusText.replace('+', '')) || 0;
+            executeRollAnimation(`${weaponName} (Ataque)`, bonus, () => {
+                const roll = Math.floor(Math.random() * 20) + 1;
+                const total = roll + bonus;
+                const sign = bonus >= 0 ? '+' : '';
+
+                document.getElementById('dice-result-val').textContent = roll;
+                document.getElementById('dice-label').textContent = "Ataque " + weaponName;
+                document.getElementById('dice-roll-total').textContent = `Total Atq: ${total}`;
+                document.getElementById('dice-roll-total').classList.remove('hidden');
+                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${bonus}`;
+                document.getElementById('dice-formula').classList.remove('hidden');
+
+                addLogEntry(`Ataque: ${weaponName}`, `1d20 ${sign}${bonus}`, total, roll);
+            });
+        }
+
+        function rollWeaponDamage(weaponName, damageFormula) {
+            playDiceSound();
+            // Suporta fórmulas de dano simples como "1d8+4", "2d6+3", "1d12"
+            try {
+                const cleanFormula = damageFormula.replace(/\s+/g, '').toLowerCase();
+                const parts = cleanFormula.split(/([+-])/);
+                const dicePart = parts[0]; // e.g. "1d8"
+                const diceSplit = dicePart.split('d');
+                const numDice = parseInt(diceSplit[0]) || 1;
+                const diceSides = parseInt(diceSplit[1]) || 6;
+                
+                let modifier = 0;
+                if (parts.length > 1) {
+                    const sign = parts[1];
+                    const modValue = parseInt(parts[2]) || 0;
+                    modifier = sign === '+' ? modValue : -modValue;
+                }
+
+                const diceGraphic = document.getElementById('dice-graphic');
+                diceGraphic.classList.remove('rolling-dice');
+                void diceGraphic.offsetWidth;
+                diceGraphic.classList.add('rolling-dice');
+
+                let spins = 0;
+                const interval = setInterval(() => {
+                    document.getElementById('dice-result-val').textContent = Math.floor(Math.random() * diceSides) + 1;
+                    spins++;
+                    if (spins > 6) {
+                        clearInterval(interval);
+                        
+                        let rolls = [];
+                        let diceTotal = 0;
+                        for (let i = 0; i < numDice; i++) {
+                            const r = Math.floor(Math.random() * diceSides) + 1;
+                            rolls.push(r);
+                            diceTotal += r;
+                        }
+                        const total = diceTotal + modifier;
+                        const sign = modifier >= 0 ? '+' : '';
+
+                        document.getElementById('dice-result-val').textContent = total;
+                        document.getElementById('dice-label').textContent = "Dano " + weaponName;
+                        document.getElementById('dice-roll-total').textContent = `${total} Dano`;
+                        document.getElementById('dice-roll-total').classList.remove('hidden');
+                        document.getElementById('dice-formula').textContent = `Rolagens: [${rolls.join(', ')}] ${modifier !== 0 ? sign + modifier : ''}`;
+                        document.getElementById('dice-formula').classList.remove('hidden');
+
+                        // No log de rolagem
+                        const list = document.getElementById('roll-log-list');
+                        if (rollHistory.length === 0) list.innerHTML = '';
+                        const timestamp = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        const entryHtml = `
+                            <div class="bg-rpg-bg p-2 rounded border border-emerald-500/30 hover:border-emerald-500/50 transition text-xs flex flex-col justify-between">
+                                <div class="flex justify-between items-center text-[10px]">
+                                    <span class="font-bold text-emerald-400 uppercase">Dano: ${weaponName}</span>
+                                    <span class="text-[9px] text-rpg-muted">${timestamp}</span>
+                                </div>
+                                <div class="flex justify-between items-end mt-1">
+                                    <span class="text-[10px] text-rpg-muted italic">${damageFormula} (Dados: ${rolls.join('+')})</span>
+                                    <span class="text-sm font-black text-emerald-400">${total}</span>
+                                </div>
+                            </div>
+                        `;
+                        list.insertAdjacentHTML('afterbegin', entryHtml);
+                        rollHistory.unshift({ title: `Dano: ${weaponName}`, formula: damageFormula, total, naturalRoll: diceTotal });
+                        
+                        // Mostrar Toast
+                        showToast(`Dano: ${weaponName}`, `${total} (${cleanFormula})`, `Dados: ${rolls.join('+')} ${modifier !== 0 ? sign + modifier : ''}`, total);
+                    }
+                }, 70);
+            } catch (err) {
+                alert("Erro ao ler fórmula de dano. Use formatos como '1d8+4', '2d6', etc.");
+            }
+        }
+
+        function clearRollLog() {
+            rollHistory = [];
+            document.getElementById('roll-log-list').innerHTML = `
+                <div class="text-rpg-muted italic text-center py-4">Nenhuma rolagem feita ainda.</div>
+            `;
+        }
+
+        // --- 9. IMPORTAÇÃO / EXPORTAÇÃO & RESET ---
+        function exportSheet() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentSheet, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `Ficha_${currentSheet.name.replace(/\s+/g, '_')}.json`);
+            dlAnchorElem.click();
+        }
+
+        function importSheet(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    currentSheet = { ...DEFAULT_SHEET, ...imported };
+                    saveSheetToStorage();
+                    renderAll();
+                    showCustomMessage("Sucesso!", "Sua ficha foi carregada com sucesso.");
+                } catch (err) {
+                    showCustomMessage("Erro!", "Não foi possível carregar o arquivo JSON.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToDefault() {
+            if (confirm("Tem certeza que deseja reiniciar para a ficha padrão de Pequeno Fumaça? Isso apagará as modificações atuais.")) {
+                currentSheet = JSON.parse(JSON.stringify(DEFAULT_SHEET));
+                saveSheetToStorage();
+                renderAll();
+            }
+        }
+
+        // Modal Customizado para Avisos/Mensagens
+        function showCustomMessage(title, text) {
+            const toast = document.getElementById('dice-toast');
+            const tResult = document.getElementById('toast-dice-result');
+            const tTitle = document.getElementById('toast-dice-title');
+            const tTotal = document.getElementById('toast-dice-total');
+            const tFormula = document.getElementById('toast-dice-formula');
+
+            tResult.textContent = "i";
+            tResult.className = "bg-rpg-accent text-rpg-bg font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner";
+            tTitle.textContent = title;
+            tTotal.textContent = text;
+            tFormula.textContent = "D&D 5e";
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', 'translate-y-20');
+            }, 50);
+
+            clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-20');
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
