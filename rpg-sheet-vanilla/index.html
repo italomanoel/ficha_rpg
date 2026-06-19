@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D&D 5e — Ficha de Personagem</title>
+  <meta name="description" content="Ficha de personagem D&D 5e offline com rolador de dados integrado." />
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+
+<!-- ═══ HEADER ══════════════════════════════════════════════════════ -->
+<header class="dnd-header">
+  <div class="header-inner">
+
+    <div class="header-brand">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <polygon points="12 2 2 7 2 17 12 22 22 17 22 7 12 2"/>
+          <polyline points="2 7 12 12 22 7"/>
+          <line x1="12" y1="12" x2="12" y2="22"/>
+          <line x1="12" y1="12" x2="2"  y2="17"/>
+          <line x1="12" y1="12" x2="22" y2="17"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="header-title font-display">D&amp;D 5e — Ficha de Personagem</h1>
+        <p class="header-sub">GERENCIADOR OFFLINE · ROLADOR INTEGRADO</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button id="btn-export" class="btn-gold flex items-center gap-2">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        Exportar JSON
+      </button>
+      <button id="btn-import" class="btn-gold flex items-center gap-2">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Importar JSON
+      </button>
+      <input type="file" id="import-file" accept=".json" style="display:none" />
+      <button id="btn-reset" class="btn-danger">Reiniciar</button>
+    </div>
+
+  </div>
+</header>
+
+<!-- ═══ MAIN GRID ════════════════════════════════════════════════════ -->
+<main class="main-wrap" role="main">
+
+  <!-- ─── COLUNA ESQUERDA ────────────────────────────────────────── -->
+  <div class="col-left">
+
+    <!-- BLOCO 1: PERSONAGEM -->
+    <section class="glass card char-block stat-card" aria-label="Informações do Personagem">
+      <div class="char-grid">
+
+        <div class="space-y-4">
+          <div>
+            <label class="section-title" for="char-name">Nome do Personagem</label>
+            <input id="char-name" type="text" class="dnd-input char-name-input w-full" style="padding:8px 12px;margin-top:6px;" autocomplete="off" />
+          </div>
+          <div class="char-row-2">
+            <div>
+              <label class="section-title" for="char-class">Classe &amp; Nível</label>
+              <div class="class-row" style="margin-top:6px;">
+                <input id="char-class" type="text" class="dnd-input" style="padding:6px 12px;font-size:.875rem;" autocomplete="off" />
+                <input id="char-level" type="number" min="1" max="20" class="dnd-input text-center" style="padding:6px 4px;font-size:.875rem;" autocomplete="off" />
+              </div>
+            </div>
+            <div>
+              <label class="section-title" for="char-race">Raça</label>
+              <input id="char-race" type="text" class="dnd-input w-full" style="padding:6px 12px;font-size:.875rem;margin-top:6px;" autocomplete="off" />
+            </div>
+          </div>
+        </div>
+
+        <div class="char-meta">
+          <div class="full">
+            <label class="section-title" for="char-player">Jogador</label>
+            <input id="char-player" type="text" class="dnd-input w-full" style="padding:6px 12px;font-size:.875rem;margin-top:6px;" autocomplete="off" />
+          </div>
+          <div>
+            <label class="section-title" for="char-background">Antecedente</label>
+            <input id="char-background" type="text" class="dnd-input w-full" style="padding:6px 12px;font-size:.875rem;margin-top:6px;" autocomplete="off" />
+          </div>
+          <div>
+            <label class="section-title" for="char-alignment">Tendência</label>
+            <input id="char-alignment" type="text" class="dnd-input w-full" style="padding:6px 12px;font-size:.875rem;margin-top:6px;" autocomplete="off" />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- BLOCO 2: STATS DE COMBATE -->
+    <section class="combat-row" aria-label="Estatísticas de Combate">
+
+      <!-- CA -->
+      <div class="glass stat-card combat-tile">
+        <span class="section-title">Classe de Armadura</span>
+        <div class="ac-wrap">
+          <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <input id="combat-ac" type="number" min="0" max="30" aria-label="Classe de Armadura" />
+        </div>
+        <span class="tile-foot">CA</span>
+      </div>
+
+      <!-- Iniciativa -->
+      <div id="tile-initiative" class="glass stat-card combat-tile tile-initiative" role="button" tabindex="0"
+           aria-label="Iniciativa — clique para rolar" title="Clique para rolar Iniciativa">
+        <span class="section-title">Iniciativa</span>
+        <div style="display:flex;flex-direction:column;align-items:center;margin:8px 0;">
+          <span id="combat-init" class="big">+1</span>
+          <span class="tile-foot">DES</span>
+        </div>
+        <span style="color:#d4a843;font-size:.6rem;letter-spacing:.1em;">CLIQUE P/ ROLAR</span>
+      </div>
+
+      <!-- Deslocamento -->
+      <div class="glass stat-card combat-tile">
+        <span class="section-title">Deslocamento</span>
+        <div class="speed-val">
+          <input id="combat-speed" type="text" aria-label="Deslocamento em metros" />
+          <span>m</span>
+        </div>
+        <span class="tile-foot">9m = 6 quadrados</span>
+      </div>
+
+      <!-- Proficiência -->
+      <div class="glass stat-card combat-tile">
+        <span class="section-title">Prof. Bônus</span>
+        <span id="prof-bonus" class="big">+2</span>
+        <span class="tile-foot">AUTO POR NÍVEL</span>
+      </div>
+
+    </section>
+
+    <!-- BLOCO 3: HP -->
+    <section class="hp-section" aria-label="Pontos de Vida">
+
+      <div class="glass hp-card">
+        <div class="hp-header">
+          <h2 class="section-title" style="font-size:.7rem;">
+            <span class="hp-dot" aria-hidden="true"></span>
+            Pontos de Vida (PV)
+          </h2>
+          <div class="hp-mods">
+            <button id="btn-hp-sub5" class="hp-btn-sub" aria-label="Remover 5 HP">−5</button>
+            <button id="btn-hp-sub1" class="hp-btn-sub" aria-label="Remover 1 HP">−1</button>
+            <span>MOD</span>
+            <button id="btn-hp-add1" class="hp-btn-add" aria-label="Adicionar 1 HP">+1</button>
+            <button id="btn-hp-add5" class="hp-btn-add" aria-label="Adicionar 5 HP">+5</button>
+          </div>
+        </div>
+
+        <div class="hp-inputs">
+          <div class="hp-box">
+            <label class="section-title" for="hp-current" style="font-size:.55rem;">Atuais</label>
+            <input id="hp-current" type="number" min="0" />
+          </div>
+          <div class="hp-box max">
+            <label class="section-title" for="hp-max" style="font-size:.55rem;">Máximos</label>
+            <input id="hp-max" type="number" min="1" />
+          </div>
+          <div class="hp-box temp">
+            <label for="hp-temp" style="font-size:.55rem;">Temporários</label>
+            <input id="hp-temp" type="number" min="0" placeholder="0" />
+          </div>
+        </div>
+
+        <div class="hp-bar-track" role="progressbar" aria-label="Barra de HP">
+          <div id="hp-bar"></div>
+        </div>
+      </div>
+
+      <div class="glass dice-card">
+        <!-- Dados de Vida -->
+        <div>
+          <div class="flex justify-between items-center" style="margin-bottom:8px;">
+            <span class="section-title">Dados de Vida</span>
+            <button id="btn-roll-hitdice" class="btn-gold" style="padding:3px 10px;font-size:.6rem;">Rolar d12</button>
+          </div>
+          <div class="hitdice-row">
+            <input id="combat-hitdice-current" type="text" placeholder="Atuais" aria-label="Dados de vida atuais" />
+            <span>/</span>
+            <input id="combat-hitdice-total"   type="text" placeholder="Total"  aria-label="Total de dados de vida" />
+          </div>
+        </div>
+
+        <!-- Resistência à Morte -->
+        <div>
+          <span class="section-title" style="display:block;margin-bottom:8px;">Resistência à Morte</span>
+          <div class="death-saves">
+            <div class="ds-row">
+              <span style="font-size:.75rem;font-weight:700;color:#10b981;">Sucessos</span>
+              <div class="ds-checks">
+                <input type="checkbox" id="death-success-1" class="ds-success" aria-label="Sucesso 1" />
+                <input type="checkbox" id="death-success-2" class="ds-success" aria-label="Sucesso 2" />
+                <input type="checkbox" id="death-success-3" class="ds-success" aria-label="Sucesso 3" />
+              </div>
+            </div>
+            <div class="ds-row">
+              <span style="font-size:.75rem;font-weight:700;color:#ef4444;">Falhas</span>
+              <div class="ds-checks">
+                <input type="checkbox" id="death-fail-1" class="ds-fail" aria-label="Falha 1" />
+                <input type="checkbox" id="death-fail-2" class="ds-fail" aria-label="Falha 2" />
+                <input type="checkbox" id="death-fail-3" class="ds-fail" aria-label="Falha 3" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- BLOCO 4: ATRIBUTOS -->
+    <section class="attr-grid" aria-label="Atributos">
+
+      <!-- Força -->
+      <div class="glass stat-card attr-tile">
+        <span class="section-title" style="font-size:.6rem;">FORÇA</span>
+        <button class="attr-btn" aria-label="Rolar teste de Força">
+          <span id="mod-str">+0</span>
+        </button>
+        <input id="val-str" type="number" min="1" max="30" class="attr-val" aria-label="Valor de Força" />
+      </div>
+
+      <!-- Destreza -->
+      <div class="glass stat-card attr-tile">
+        <span class="section-title" style="font-size:.6rem;">DESTREZA</span>
+        <button class="attr-btn" aria-label="Rolar teste de Destreza">
+          <span id="mod-des">+0</span>
+        </button>
+        <input id="val-des" type="number" min="1" max="30" class="attr-val" aria-label="Valor de Destreza" />
+      </div>
+
+      <!-- Constituição -->
+      <div class="glass stat-card attr-tile">
+        <span class="section-title" style="font-size:.6rem;">CONSTITUIÇÃO</span>
+        <button class="attr-btn" aria-label="Rolar teste de Constituição">
+          <span id="mod-con">+0</span>
+        </button>
+        <input id="val-con" type="number" min="1" max="30" class="attr-val" aria-label="Valor de Constituição" />
+      </div>
+
+      <!-- Inteligência -->
+      <div class="glass stat-card attr-tile">
+        <span class="section-title" style="font-size:.6rem;">INTELIGÊNCIA</span>
+        <button class="attr-btn" aria-label="Rolar teste de Inteligência">
+          <span id="mod-int">+0</span>
+        </button>
+        <input id="val-int" type="number" min="1" max="30" class="attr-val" aria-label="Valor de Inteligência" />
+      </div>
+
+      <!-- Sabedoria -->
+      <div class="glass stat-card attr-tile">
+        <span class="section-title" style="font-size:.6rem;">SABEDORIA</span>
+        <button class="attr-btn" aria-label="Rolar teste de Sabedoria">
+          <span id="mod-sab">+0</span>
+        </button>
+        <input id="val-sab" type="number" min="1" max="30" class="attr-val" aria-label="Valor de Sabedoria" />
+      </div>
+
+      <!-- Carisma -->
+      <div class="glass stat-card attr-tile">
+        <span class="section-title" style="font-size:.6rem;">CARISMA</span>
+        <button class="attr-btn" aria-label="Rolar teste de Carisma">
+          <span id="mod-car">+0</span>
+        </button>
+        <input id="val-car" type="number" min="1" max="30" class="attr-val" aria-label="Valor de Carisma" />
+      </div>
+
+    </section>
+
+    <!-- BLOCO 5: ARMAS -->
+    <section class="glass card" aria-label="Armas e Ataques">
+      <div class="weapons-header">
+        <h2 class="section-title" style="font-size:.7rem;display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          Ataques &amp; Armas
+        </h2>
+        <button id="btn-add-weapon" class="btn-solid-gold">+ Nova Arma</button>
+      </div>
+      <div class="sep" style="margin:12px 0;"></div>
+      <div class="overflow-x">
+        <table class="weapons-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Arma / Nome</th>
+              <th style="text-align:center;">Bônus Atq</th>
+              <th style="text-align:center;">Dano / Tipo</th>
+              <th style="text-align:right;">Rolar</th>
+            </tr>
+          </thead>
+          <tbody id="weapons-list"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- BLOCO 6: INVENTÁRIO & PROFICIÊNCIAS -->
+    <section class="inventory-section">
+
+      <div class="glass card space-y-4">
+        <h2 class="section-title">Mochila &amp; Inventário</h2>
+        <div class="sep"></div>
+
+        <div class="coin-grid">
+          <div class="coin-chip">
+            <label for="coin-pc" style="color:#94a3b8;">PC</label>
+            <input id="coin-pc" type="number" min="0" aria-label="Peças de Cobre" />
+          </div>
+          <div class="coin-chip">
+            <label for="coin-pp" style="color:#d97706;">PP</label>
+            <input id="coin-pp" type="number" min="0" aria-label="Peças de Prata" />
+          </div>
+          <div class="coin-chip">
+            <label for="coin-pe" style="color:#94a3b8;">PE</label>
+            <input id="coin-pe" type="number" min="0" aria-label="Peças de Electrum" />
+          </div>
+          <div class="coin-chip">
+            <label for="coin-po" style="color:#eab308;">PO</label>
+            <input id="coin-po" type="number" min="0" aria-label="Peças de Ouro" />
+          </div>
+          <div class="coin-chip">
+            <label for="coin-pl" style="color:#5eead4;">PL</label>
+            <input id="coin-pl" type="number" min="0" aria-label="Peças de Platina" />
+          </div>
+        </div>
+
+        <textarea id="equipment-text" class="dnd-textarea" style="height:160px;"
+                  placeholder="Itens da mochila, poções, armadura, itens mágicos..."></textarea>
+      </div>
+
+      <div class="glass card space-y-4">
+        <h2 class="section-title">Proficiências &amp; Idiomas</h2>
+        <div class="sep"></div>
+        <textarea id="prof-langs-text" class="dnd-textarea" style="height:208px;"
+                  placeholder="Ex: Idioma Anão, Comum. Proficiências em armaduras, armas marciais..."></textarea>
+      </div>
+
+    </section>
+
+  </div><!-- /col-left -->
+
+  <!-- ─── COLUNA DIREITA ─────────────────────────────────────────── -->
+  <div class="col-right">
+
+    <!-- ROLADOR DE DADOS -->
+    <section class="roller-card" aria-label="Rolador de Dados">
+
+      <div class="flex justify-between items-center">
+        <h2 class="section-title" style="font-size:.7rem;display:flex;align-items:center;gap:8px;">
+          <span class="pulse-dot" aria-hidden="true"></span>
+          Rolador de Dados
+        </h2>
+        <button id="btn-clear-log" class="btn-gold" style="padding:3px 8px;font-size:.55rem;">Limpar</button>
+      </div>
+
+      <!-- 3D Dice display -->
+      <div class="dice-display" role="img" aria-label="Dados 3D">
+        <div class="dice-perspective" id="dice-scene">
+          <div id="dice-graphic">
+            <div class="d-face front"><span id="dice-result-val">—</span></div>
+            <div class="d-face back"><span  class="d-face-rune">⬡</span></div>
+            <div class="d-face right"><span class="d-face-rune">✦</span></div>
+            <div class="d-face left"><span  class="d-face-rune">⚔</span></div>
+            <div class="d-face top"><span   class="d-face-rune">◈</span></div>
+            <div class="d-face bot"><span   class="d-face-rune">❋</span></div>
+          </div>
+        </div>
+        <div class="dice-label-wrap">
+          <p id="dice-label">—</p>
+          <div id="dice-roll-total" class="hidden">Total: —</div>
+          <div id="dice-formula"    class="hidden">—</div>
+        </div>
+      </div>
+
+      <!-- Log -->
+      <div>
+        <span class="section-title" style="font-size:.58rem;display:block;margin-bottom:8px;">Histórico Recente</span>
+        <div id="roll-log-list" class="roll-log">
+          <div class="log-empty">Nenhuma rolagem feita ainda.</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- TESTES DE RESISTÊNCIA -->
+    <section class="glass card space-y-3" aria-label="Testes de Resistência">
+      <div class="flex justify-between items-center">
+        <h2 class="section-title">Testes de Resistência</h2>
+        <span style="color:#64718f;font-size:.55rem;">● = proficiente</span>
+      </div>
+      <div class="sep"></div>
+
+      <div class="save-grid">
+        <!-- Esquerda -->
+        <div class="space-y-2">
+          <!-- Força -->
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <input type="checkbox" id="save-prof-str" style="display:none;" />
+              <span class="prof-dot" id="sdot-str" role="checkbox" aria-checked="false" tabindex="0"
+                    aria-label="Proficiência em Força" title="Clique para proficiência"></span>
+              <button id="save-roll-str" class="skill-btn">FOR</button>
+            </div>
+            <span id="save-val-str" style="font-family:'Cinzel',serif;font-weight:700;color:#d4a843;font-size:.75rem;">+0</span>
+          </div>
+          <!-- Destreza -->
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <input type="checkbox" id="save-prof-des" style="display:none;" />
+              <span class="prof-dot" id="sdot-des" role="checkbox" aria-checked="false" tabindex="0"
+                    aria-label="Proficiência em Destreza" title="Clique para proficiência"></span>
+              <button id="save-roll-des" class="skill-btn">DES</button>
+            </div>
+            <span id="save-val-des" style="font-family:'Cinzel',serif;font-weight:700;color:#d4a843;font-size:.75rem;">+0</span>
+          </div>
+          <!-- Constituição -->
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <input type="checkbox" id="save-prof-con" style="display:none;" />
+              <span class="prof-dot" id="sdot-con" role="checkbox" aria-checked="false" tabindex="0"
+                    aria-label="Proficiência em Constituição" title="Clique para proficiência"></span>
+              <button id="save-roll-con" class="skill-btn">CON</button>
+            </div>
+            <span id="save-val-con" style="font-family:'Cinzel',serif;font-weight:700;color:#d4a843;font-size:.75rem;">+0</span>
+          </div>
+        </div>
+        <!-- Direita -->
+        <div class="space-y-2">
+          <!-- Inteligência -->
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <input type="checkbox" id="save-prof-int" style="display:none;" />
+              <span class="prof-dot" id="sdot-int" role="checkbox" aria-checked="false" tabindex="0"
+                    aria-label="Proficiência em Inteligência" title="Clique para proficiência"></span>
+              <button id="save-roll-int" class="skill-btn">INT</button>
+            </div>
+            <span id="save-val-int" style="font-family:'Cinzel',serif;font-weight:700;color:#d4a843;font-size:.75rem;">+0</span>
+          </div>
+          <!-- Sabedoria -->
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <input type="checkbox" id="save-prof-sab" style="display:none;" />
+              <span class="prof-dot" id="sdot-sab" role="checkbox" aria-checked="false" tabindex="0"
+                    aria-label="Proficiência em Sabedoria" title="Clique para proficiência"></span>
+              <button id="save-roll-sab" class="skill-btn">SAB</button>
+            </div>
+            <span id="save-val-sab" style="font-family:'Cinzel',serif;font-weight:700;color:#d4a843;font-size:.75rem;">+0</span>
+          </div>
+          <!-- Carisma -->
+          <div class="skill-row">
+            <div class="skill-row-left">
+              <input type="checkbox" id="save-prof-car" style="display:none;" />
+              <span class="prof-dot" id="sdot-car" role="checkbox" aria-checked="false" tabindex="0"
+                    aria-label="Proficiência em Carisma" title="Clique para proficiência"></span>
+              <button id="save-roll-car" class="skill-btn">CAR</button>
+            </div>
+            <span id="save-val-car" style="font-family:'Cinzel',serif;font-weight:700;color:#d4a843;font-size:.75rem;">+0</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- PERÍCIAS -->
+    <section class="glass card space-y-3" aria-label="Perícias">
+      <div class="flex justify-between items-center">
+        <h2 class="section-title">Perícias</h2>
+        <span style="color:#64718f;font-size:.55rem;">Toque para Rolar</span>
+      </div>
+      <div class="sep"></div>
+      <div id="skills-list" class="space-y-1" style="max-height:384px;overflow-y:auto;padding-right:4px;"></div>
+    </section>
+
+    <!-- CARACTERÍSTICAS -->
+    <section class="glass card space-y-3" aria-label="Características e Traços">
+      <h2 class="section-title">Características &amp; Traços</h2>
+      <div class="sep"></div>
+      <textarea id="features-text" class="dnd-textarea" style="height:224px;"
+                placeholder="Fúria de Bárbaro, Sentido de Perigo, Resiliência Anã..."></textarea>
+    </section>
+
+  </div><!-- /col-right -->
+
+</main>
+
+<!-- ═══ TOAST ════════════════════════════════════════════════════════ -->
+<div id="dice-toast" role="alert" aria-live="polite" aria-atomic="true">
+  <div class="toast-inner">
+    <div id="toast-dice-result">—</div>
+    <div>
+      <div id="toast-dice-title">Rolagem</div>
+      <div id="toast-dice-total">Total: —</div>
+      <div id="toast-dice-formula">—</div>
+    </div>
+  </div>
+</div>
+
+<script src="src/sheet.js"></script>
+
+<!-- Bind atribute buttons — done here to keep JS clean -->
+<script>
+  document.querySelectorAll('.attr-btn').forEach(btn => {
+    const tile = btn.closest('.attr-tile');
+    const id   = tile.querySelector('[id^="val-"]')?.id;
+    if (!id) return;
+    const stat = id.replace('val-', '');
+    const NAMES = { str:'Força', des:'Destreza', con:'Constituição', int:'Inteligência', sab:'Sabedoria', car:'Carisma' };
+    btn.addEventListener('click', () => rollStat(NAMES[stat], stat));
+  });
+
+  // Bind save prof dots (visual toggle for hidden checkbox)
+  document.querySelectorAll('#save-val-str, #save-val-des, #save-val-con, #save-val-int, #save-val-sab, #save-val-car').forEach(() => {});
+  ['str','des','con','int','sab','car'].forEach(s => {
+    const dot = document.getElementById(`sdot-${s}`);
+    const cb  = document.getElementById(`save-prof-${s}`);
+    if (!dot || !cb) return;
+    dot.addEventListener('click', () => {
+      cb.checked = !cb.checked;
+      cb.dispatchEvent(new Event('change'));
+    });
+    dot.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); dot.click(); }
+    });
+  });
+
+  // Initiative tile keyboard
+  const initTile = document.getElementById('tile-initiative');
+  initTile?.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); rollInitiative(); }
+  });
+  initTile?.addEventListener('click', () => rollInitiative());
+</script>
+
+</body>
+</html>

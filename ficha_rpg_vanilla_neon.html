@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha RPG Moderno — Personagem</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+    <style>
+    /* ================================================================
+       DESIGN SYSTEM — RPG MODERNO / CYBERPUNK
+       Paleta: fundo escuro grafite, acento verde-neon (#39ff14),
+       vermelho sangue, cinza frio. Tipografia techno-angular.
+       ================================================================ */
+    :root {
+        --bg:        #0a0c0f;
+        --panel:     #101318;
+        --panel2:    #141820;
+        --border:    #1e2530;
+        --accent:    #39ff14;
+        --accent2:   #00e5ff;
+        --text:      #c8d6e5;
+        --muted:     #4a5568;
+        --danger:    #ff2233;
+        --success:   #39ff14;
+        --warn:      #ffaa00;
+        --font-ui:   'Rajdhani', 'Segoe UI', sans-serif;
+        --font-mono: 'Share Tech Mono', monospace;
+        --font-hud:  'Orbitron', 'Arial', sans-serif;
+        --radius:    2px;
+        --radius-md: 4px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    ::-webkit-scrollbar              { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track        { background: var(--bg); }
+    ::-webkit-scrollbar-thumb        { background: var(--border); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover  { background: var(--accent); }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type="number"] { -moz-appearance: textfield; }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-ui);
+        font-size: 15px;
+        min-height: 100vh;
+        padding-bottom: 48px;
+        background-image:
+            repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(57,255,20,0.018) 39px, rgba(57,255,20,0.018) 40px),
+            repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(57,255,20,0.018) 39px, rgba(57,255,20,0.018) 40px);
+    }
+
+    /* ── TIPOGRAFIA ── */
+    .hud-label {
+        font-family: var(--font-hud);
+        font-size: 0.55rem;
+        font-weight: 700;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+    .mono { font-family: var(--font-mono); }
+    .heading {
+        font-family: var(--font-hud);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--accent);
+    }
+
+    /* ── PAINÉIS ── */
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        position: relative;
+    }
+    .panel::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        opacity: .25;
+    }
+    .panel-accent {
+        border-color: rgba(57,255,20,.3);
+        box-shadow: 0 0 18px rgba(57,255,20,.06), inset 0 0 30px rgba(57,255,20,.015);
+    }
+    .panel:hover { border-color: rgba(57,255,20,.22); }
+
+    /* Clip-corner decoration */
+    .clip-corner {
+        clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+
+    /* ── INPUTS ── */
+    .field {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text);
+        font-family: var(--font-ui);
+        font-size: .875rem;
+        padding: 7px 10px;
+        width: 100%;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    .field:focus {
+        outline: none;
+        border-color: rgba(57,255,20,.55);
+        box-shadow: 0 0 0 1px rgba(57,255,20,.15), 0 0 8px rgba(57,255,20,.1);
+    }
+    .field-name {
+        font-family: var(--font-hud);
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--accent);
+        letter-spacing: .04em;
+    }
+    .field-trans {
+        background: transparent;
+        border: 0;
+        border-bottom: 1px solid var(--border);
+        color: var(--text);
+        font-family: var(--font-mono);
+        font-size: .875rem;
+        outline: none;
+        transition: border-color .15s;
+    }
+    .field-trans:focus { border-color: var(--accent); }
+
+    textarea.field {
+        resize: vertical;
+        font-size: .8rem;
+        line-height: 1.65;
+    }
+
+    /* ── SEPARADOR ── */
+    .sep {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--border), transparent);
+        margin: 0;
+    }
+
+    /* ── BOTÕES ── */
+    button { cursor: pointer; font-family: var(--font-ui); }
+
+    .btn {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-family: var(--font-hud);
+        font-size: .6rem;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        padding: 5px 12px;
+        border-radius: var(--radius);
+        transition: border-color .15s, color .15s, box-shadow .15s;
+    }
+    .btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        box-shadow: 0 0 8px rgba(57,255,20,.15);
+    }
+    .btn-primary {
+        background: rgba(57,255,20,.08);
+        border-color: rgba(57,255,20,.4);
+        color: var(--accent);
+    }
+    .btn-primary:hover {
+        background: rgba(57,255,20,.18);
+        box-shadow: 0 0 14px rgba(57,255,20,.25);
+    }
+    .btn-danger-sm {
+        background: transparent; border: none;
+        color: var(--danger); font-size: .7rem;
+        opacity: .5; padding: 0; transition: opacity .15s;
+    }
+    .btn-danger-sm:hover { opacity: 1; }
+    .btn-hp-sub {
+        background: rgba(255,34,51,.1);
+        border: 1px solid rgba(255,34,51,.25);
+        color: #ff8899;
+        font-family: var(--font-mono);
+        font-size: .7rem; font-weight: 700;
+        padding: 3px 9px; border-radius: var(--radius);
+        transition: background .15s;
+    }
+    .btn-hp-sub:hover { background: rgba(255,34,51,.28); }
+    .btn-hp-add {
+        background: rgba(57,255,20,.1);
+        border: 1px solid rgba(57,255,20,.25);
+        color: var(--success);
+        font-family: var(--font-mono);
+        font-size: .7rem; font-weight: 700;
+        padding: 3px 9px; border-radius: var(--radius);
+        transition: background .15s;
+    }
+    .btn-hp-add:hover { background: rgba(57,255,20,.25); }
+
+    /* ── LAYOUT ── */
+    .wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 16px;
+    }
+
+    .grid-12 {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+    }
+    @media (max-width: 1023px) { .grid-12 { grid-template-columns: 1fr; } }
+
+    .col-8 { grid-column: span 8; }
+    .col-4 { grid-column: span 4; }
+    @media (max-width: 1023px) { .col-8, .col-4 { grid-column: span 1; } }
+
+    .col-left  { display: flex; flex-direction: column; gap: 14px; }
+    .col-right { display: flex; flex-direction: column; gap: 14px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    @media (max-width: 640px) { .grid-4 { grid-template-columns: 1fr 1fr; } }
+
+    .grid-3-md {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    @media (min-width: 768px) { .grid-3-md { grid-template-columns: 2fr 1fr; } }
+
+    .grid-hp {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    @media (min-width: 768px) { .grid-hp { grid-template-columns: 8fr 4fr; } }
+
+    .grid-inv {
+        display: grid; grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    @media (min-width: 768px) { .grid-inv { grid-template-columns: 1fr 1fr; } }
+
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-end { justify-content: flex-end; }
+    .justify-center { justify-content: center; }
+    .gap-1 { gap: 4px; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .gap-4 { gap: 16px; }
+    .w-full { width: 100%; }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .hidden { display: none !important; }
+    .space-y-2 > * + * { margin-top: 8px; }
+    .space-y-3 > * + * { margin-top: 12px; }
+    .space-y-4 > * + * { margin-top: 16px; }
+
+    /* ── HEADER ── */
+    .header {
+        position: sticky; top: 0; z-index: 40;
+        background: rgba(10,12,15,.96);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 1px 0 rgba(57,255,20,.08), 0 4px 20px rgba(0,0,0,.6);
+        backdrop-filter: blur(8px);
+        padding: 12px 24px;
+    }
+    .header-inner {
+        max-width: 1280px; margin: 0 auto;
+        display: flex; flex-wrap: wrap;
+        justify-content: space-between; align-items: center;
+        gap: 10px;
+    }
+    .header-brand { display: flex; align-items: center; gap: 14px; }
+    .logo-box {
+        width: 44px; height: 44px;
+        border: 1px solid rgba(57,255,20,.4);
+        border-radius: var(--radius);
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 12px rgba(57,255,20,.15), inset 0 0 10px rgba(57,255,20,.05);
+        flex-shrink: 0;
+        position: relative;
+        clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    }
+    .logo-box svg { color: var(--accent); width: 24px; height: 24px; }
+    .header-title {
+        font-family: var(--font-hud);
+        font-size: .85rem; font-weight: 900;
+        color: var(--accent);
+        letter-spacing: .1em;
+        text-shadow: 0 0 12px rgba(57,255,20,.4);
+    }
+    .header-sub {
+        font-family: var(--font-mono);
+        font-size: .58rem;
+        color: var(--muted);
+        margin-top: 2px;
+        letter-spacing: .08em;
+    }
+    .header-sub::before { content: '// '; color: rgba(57,255,20,.4); }
+    .header-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+    /* ── STATUS BAR (scan line effect) ── */
+    .status-bar {
+        background: rgba(57,255,20,.04);
+        border-bottom: 1px solid var(--border);
+        padding: 4px 24px;
+        font-family: var(--font-mono);
+        font-size: .58rem;
+        color: var(--muted);
+        letter-spacing: .06em;
+    }
+    .status-bar span { color: rgba(57,255,20,.6); margin-right: 16px; }
+    .status-dot {
+        display: inline-block; width: 5px; height: 5px;
+        border-radius: 50%; background: var(--accent);
+        animation: blink 1.4s infinite;
+        margin-right: 5px; vertical-align: middle;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+    /* ── CARD SECTION ── */
+    .card { padding: 16px 20px; }
+    .card-sm { padding: 12px 16px; }
+
+    /* ── CHAR INFO BLOCK ── */
+    .char-grid {
+        display: grid; grid-template-columns: 1fr; gap: 16px;
+    }
+    @media (min-width: 768px) { .char-grid { grid-template-columns: 2fr 1fr; } }
+
+    .char-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .char-meta .span-2 { grid-column: span 2; }
+
+    .class-row { display: flex; gap: 6px; }
+    .class-row .field:first-child { flex: 3; }
+    .class-row .field:last-child  { flex: 1; text-align: center; font-family: var(--font-mono); font-weight: 700; color: var(--accent); }
+
+    /* Tag-style corners for the character name block */
+    .block-tag {
+        position: absolute; top: -1px; left: 12px;
+        font-family: var(--font-mono);
+        font-size: .52rem; color: rgba(57,255,20,.5);
+        background: var(--panel); padding: 0 6px;
+        letter-spacing: .06em;
+    }
+
+    /* ── COMBAT TILES ── */
+    .combat-tile {
+        padding: 14px 10px;
+        text-align: center;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: space-between;
+        cursor: default;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    .combat-tile:hover { border-color: rgba(57,255,20,.3); }
+    .combat-tile .big-val {
+        font-family: var(--font-hud);
+        font-size: 2rem; font-weight: 900;
+        color: var(--accent);
+        text-shadow: 0 0 14px rgba(57,255,20,.5);
+        line-height: 1; margin: 8px 0;
+    }
+    .tile-clickable { cursor: pointer; }
+    .tile-clickable:hover .big-val { text-shadow: 0 0 22px rgba(57,255,20,.8); }
+    .tile-foot { font-family: var(--font-mono); font-size: .58rem; color: var(--muted); }
+    .tile-cta  { font-family: var(--font-mono); font-size: .55rem; color: rgba(57,255,20,.6); letter-spacing: .08em; }
+
+    .ac-wrap { position: relative; display: flex; align-items: center; justify-content: center; margin: 4px 0; }
+    .ac-wrap svg { width: 54px; height: 54px; opacity: .15; color: var(--accent); }
+    .ac-wrap input {
+        position: absolute; text-align: center;
+        font-family: var(--font-hud); font-size: 1.4rem; font-weight: 900;
+        background: transparent; border: none; width: 50px; height: 50px;
+        color: var(--accent); outline: none;
+        text-shadow: 0 0 10px rgba(57,255,20,.5);
+    }
+
+    .speed-val { display: flex; align-items: center; justify-content: center; gap: 4px; margin: 8px 0; }
+    .speed-val input {
+        font-family: var(--font-hud); font-size: 1.5rem; font-weight: 700;
+        text-align: center; background: transparent;
+        border: 0; border-bottom: 1px solid var(--border);
+        color: var(--text); width: 52px; outline: none;
+        transition: border-color .15s;
+    }
+    .speed-val input:focus { border-color: var(--accent); }
+    .speed-val span { color: var(--muted); font-size: .85rem; font-weight: 600; }
+
+    /* ── HP SECTION ── */
+    .hp-card { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+    .hp-header { display: flex; justify-content: space-between; align-items: center; }
+    .hp-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: var(--danger); box-shadow: 0 0 8px rgba(255,34,51,.8);
+        display: inline-block; margin-right: 8px;
+        animation: pulse-red 2s infinite;
+    }
+    @keyframes pulse-red {
+        0%,100% { box-shadow: 0 0 4px rgba(255,34,51,.6); }
+        50%      { box-shadow: 0 0 12px rgba(255,34,51,1); }
+    }
+    .hp-mods { display: flex; align-items: center; gap: 6px; }
+    .hp-mods .label { font-family: var(--font-mono); font-size: .62rem; color: var(--muted); }
+
+    .hp-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .hp-box {
+        background: var(--bg); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 10px 6px; text-align: center;
+        transition: border-color .15s;
+    }
+    .hp-box:focus-within { border-color: rgba(57,255,20,.4); }
+    .hp-box label { font-size: .6rem; display: block; margin-bottom: 4px; }
+    .hp-box input {
+        width: 100%; text-align: center;
+        font-family: var(--font-hud); font-size: 1.5rem; font-weight: 700;
+        background: transparent; border: 0; outline: none; color: var(--text);
+    }
+    .hp-box.temp label { color: var(--accent2); }
+    .hp-box.temp input { color: var(--accent2); }
+    .hp-box.max  input { color: var(--muted); }
+
+    .hp-bar-track {
+        height: 8px; border-radius: 0;
+        background: rgba(255,255,255,.04);
+        border: 1px solid var(--border);
+        overflow: hidden; position: relative;
+    }
+    #hp-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--danger) 0%, var(--warn) 50%, var(--accent) 100%);
+        box-shadow: 0 0 6px rgba(57,255,20,.3);
+        transition: width .4s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── HIT DICE CARD ── */
+    .dice-card { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+    .hitdice-row {
+        background: var(--bg); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 8px 10px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .hitdice-row input {
+        flex: 1; text-align: center;
+        font-family: var(--font-mono); font-size: .875rem; font-weight: 700;
+        background: transparent; border: 0; outline: none; color: var(--text);
+    }
+    .hitdice-row .sep-val { color: var(--muted); font-weight: 700; }
+
+    .death-saves { display: flex; flex-direction: column; gap: 8px; }
+    .ds-row { display: flex; justify-content: space-between; align-items: center; }
+    .ds-checks { display: flex; gap: 8px; }
+    .ds-success { width: 17px; height: 17px; accent-color: var(--success); cursor: pointer; }
+    .ds-fail    { width: 17px; height: 17px; accent-color: var(--danger);  cursor: pointer; }
+
+    /* ── ATTRS ── */
+    .attr-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    @media (min-width: 640px) { .attr-grid { grid-template-columns: repeat(6, 1fr); } }
+
+    .attr-tile {
+        padding: 10px 8px;
+        display: flex; flex-direction: column;
+        align-items: center; gap: 8px;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    .attr-tile:hover { border-color: rgba(57,255,20,.3); box-shadow: 0 0 12px rgba(57,255,20,.05); }
+
+    .attr-btn {
+        width: 50px; height: 50px;
+        border-radius: var(--radius);
+        background: var(--bg);
+        border: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+        transition: border-color .15s, box-shadow .15s;
+    }
+    .attr-btn:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 12px rgba(57,255,20,.25);
+    }
+    .attr-btn span {
+        font-family: var(--font-hud); font-size: 1rem; font-weight: 900;
+        color: var(--accent);
+    }
+    .attr-val {
+        width: 38px; text-align: center;
+        font-family: var(--font-mono); font-size: .8rem; font-weight: 700;
+        background: transparent; border: 0;
+        border-bottom: 1px dashed var(--border);
+        color: var(--text); outline: none;
+        transition: border-color .15s;
+    }
+    .attr-val:focus { border-color: rgba(57,255,20,.5); }
+
+    /* ── WEAPONS ── */
+    .weapons-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .weapons-table { width: 100%; border-collapse: collapse; font-size: .8rem; }
+    .weapons-table th {
+        padding-bottom: 8px; text-align: left;
+        font-family: var(--font-mono);
+        font-size: .58rem; font-weight: 700;
+        letter-spacing: .1em; text-transform: uppercase;
+        color: var(--muted); border-bottom: 1px solid var(--border);
+    }
+    .weapon-row td { padding: 8px 4px; border-bottom: 1px solid rgba(30,37,48,.8); }
+    .weapon-row:hover td { background: rgba(57,255,20,.025); }
+    .weapon-input {
+        background: transparent; border: 0;
+        border-bottom: 1px solid transparent;
+        color: var(--text); outline: none;
+        font-family: var(--font-mono); font-size: .8rem;
+        transition: border-color .12s;
+    }
+    .weapon-input:hover { border-color: var(--border); }
+    .weapon-input:focus { border-color: var(--accent); }
+    .overflow-x { overflow-x: auto; }
+
+    /* ── COINS ── */
+    .coin-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 12px; }
+    .coin-chip {
+        background: var(--bg); border: 1px solid var(--border);
+        border-radius: var(--radius); text-align: center; padding: 6px 4px;
+        transition: border-color .15s;
+    }
+    .coin-chip:hover { border-color: rgba(57,255,20,.25); }
+    .coin-chip label { font-family: var(--font-mono); font-size: .6rem; display: block; margin-bottom: 3px; }
+    .coin-chip input {
+        width: 100%; text-align: center;
+        font-family: var(--font-mono); font-size: .75rem;
+        background: transparent; border: 0; outline: none; color: var(--text);
+    }
+
+    /* ── SKILLS / SAVES ── */
+    .skill-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 5px 8px; border-radius: var(--radius);
+        border: 1px solid transparent;
+        transition: background .12s, border-color .12s;
+    }
+    .skill-row:hover { background: rgba(57,255,20,.03); border-color: rgba(57,255,20,.12); }
+    .skill-row-left { display: flex; align-items: center; gap: 8px; }
+    .skill-check { width: 14px; height: 14px; accent-color: var(--accent); cursor: pointer; }
+    .skill-btn {
+        background: none; border: none;
+        font-family: var(--font-ui); font-size: .78rem; font-weight: 600;
+        color: var(--text); cursor: pointer; text-align: left;
+        transition: color .12s; padding: 0;
+    }
+    .skill-btn:hover { color: var(--accent); }
+    .skill-attr { font-family: var(--font-mono); font-size: .58rem; color: var(--muted); margin-left: 3px; }
+    .skill-val {
+        font-family: var(--font-mono); font-weight: 700;
+        color: var(--accent); font-size: .78rem;
+    }
+
+    .save-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* ── DICE ROLLER ── */
+    .roller-card {
+        background: var(--panel);
+        border: 1px solid rgba(57,255,20,.25);
+        border-radius: var(--radius);
+        box-shadow: 0 0 30px rgba(57,255,20,.04), inset 0 0 40px rgba(0,0,0,.3);
+        padding: 18px;
+    }
+    .roller-card::before {
+        background: linear-gradient(90deg, transparent, rgba(57,255,20,.3), transparent);
+        opacity: .5;
+    }
+
+    .dice-display {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        min-height: 160px; padding: 20px; gap: 10px;
+        position: relative; overflow: hidden;
+    }
+    .dice-display::after {
+        content: '';
+        position: absolute; inset: 0;
+        background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(57,255,20,.012) 2px, rgba(57,255,20,.012) 3px);
+        pointer-events: none;
+    }
+
+    .dice-graphic-wrap { position: relative; width: 72px; height: 72px; }
+    #dice-graphic {
+        width: 72px; height: 72px;
+        display: flex; align-items: center; justify-content: center;
+        position: relative;
+    }
+    #dice-graphic svg {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        color: rgba(57,255,20,.22); stroke: rgba(57,255,20,.22);
+    }
+    #dice-result-val {
+        font-family: var(--font-hud); font-size: 1.6rem; font-weight: 900;
+        color: var(--accent); position: relative; z-index: 1;
+        text-shadow: 0 0 16px rgba(57,255,20,.8);
+    }
+    @keyframes dice-spin {
+        0%   { transform: rotate(0deg)   scale(.8); opacity: .5; }
+        50%  { transform: rotate(180deg) scale(1.2); opacity: 1; }
+        100% { transform: rotate(360deg) scale(1);   opacity: 1; }
+    }
+    .rolling-dice { animation: dice-spin .6s cubic-bezier(.175,.885,.32,1.275) forwards; }
+
+    #dice-label {
+        font-family: var(--font-mono); font-size: .6rem; color: var(--muted);
+        letter-spacing: .1em; text-transform: uppercase;
+    }
+    #dice-roll-total {
+        font-family: var(--font-hud); font-size: 1.5rem; font-weight: 900;
+        color: var(--accent); text-shadow: 0 0 14px rgba(57,255,20,.6);
+    }
+    #dice-formula { font-family: var(--font-mono); font-size: .65rem; color: var(--muted); font-style: italic; }
+
+    /* scan line on crit */
+    .crit-flash { animation: crit-scan .4s ease-out; }
+    @keyframes crit-scan {
+        0%   { box-shadow: 0 0 0 rgba(57,255,20,0); }
+        40%  { box-shadow: 0 0 40px rgba(57,255,20,.4), inset 0 0 30px rgba(57,255,20,.1); }
+        100% { box-shadow: 0 0 8px rgba(57,255,20,.05); }
+    }
+
+    .roll-log { max-height: 170px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; padding-right: 4px; }
+    .log-entry {
+        background: var(--bg); border: 1px solid var(--border);
+        border-radius: var(--radius); padding: 6px 8px;
+        animation: fade-in .15s ease-out;
+    }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+    .log-entry-head { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: .58rem; }
+    .log-entry-body { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 3px; }
+    .log-formula { font-family: var(--font-mono); font-size: .62rem; color: var(--muted); font-style: italic; }
+    .log-total { font-family: var(--font-hud); font-weight: 900; font-size: .9rem; }
+    .log-empty { font-family: var(--font-mono); font-size: .72rem; color: var(--muted); text-align: center; padding: 20px; font-style: italic; }
+
+    /* ── PULSE DOT ── */
+    .pulse-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: var(--accent); display: inline-block;
+        animation: pulse-green 2s infinite; margin-right: 7px;
+        box-shadow: 0 0 6px rgba(57,255,20,.7);
+    }
+    @keyframes pulse-green {
+        0%,100% { opacity:1; transform: scale(1); }
+        50%      { opacity:.5; transform: scale(.8); }
+    }
+
+    /* ── TOAST ── */
+    #dice-toast {
+        position: fixed; bottom: 20px; right: 20px; z-index: 50;
+        background: var(--panel);
+        border: 1px solid rgba(57,255,20,.35);
+        border-radius: var(--radius);
+        box-shadow: 0 0 30px rgba(57,255,20,.1), 0 10px 40px rgba(0,0,0,.7);
+        padding: 14px 16px;
+        max-width: 260px;
+        transform: translateY(80px);
+        opacity: 0;
+        transition: transform .3s, opacity .3s;
+        clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+    }
+    #dice-toast.visible { transform: translateY(0); opacity: 1; }
+    .toast-inner { display: flex; align-items: center; gap: 12px; }
+    #toast-dice-result {
+        width: 44px; height: 44px;
+        border-radius: var(--radius);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-hud); font-weight: 900; font-size: 1.15rem;
+        flex-shrink: 0;
+        background: rgba(57,255,20,.1);
+        border: 1px solid rgba(57,255,20,.4);
+        color: var(--accent);
+        text-shadow: 0 0 10px rgba(57,255,20,.6);
+        clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    }
+    #toast-dice-title  { font-family: var(--font-mono); font-size: .58rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+    #toast-dice-total  { font-family: var(--font-hud); font-weight: 900; font-size: .95rem; color: var(--accent); margin-top: 2px; text-shadow: 0 0 8px rgba(57,255,20,.5); }
+    #toast-dice-formula{ font-family: var(--font-mono); font-size: .6rem; color: var(--muted); font-style: italic; }
+
+    /* ── PRINT ── */
+    @media print {
+        .header, .status-bar, #dice-toast, .roller-card { display: none !important; }
+        body { background: white; color: #111; }
+        .panel { background: white; border: 1px solid #ccc; }
+    }
+    </style>
+</head>
+<body>
+
+<!-- ══ HEADER ═══════════════════════════════════════════════════════ -->
+<header class="header">
+    <div class="header-inner">
+        <div class="header-brand">
+            <div class="logo-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/>
+                    <line x1="2"  y1="8.5"  x2="22" y2="8.5"/>
+                    <line x1="2"  y1="15.5" x2="22" y2="15.5"/>
+                    <line x1="12" y1="2"    x2="2"  y2="15.5"/>
+                    <line x1="12" y1="2"    x2="22" y2="15.5"/>
+                    <line x1="12" y1="22"   x2="2"  y2="8.5"/>
+                    <line x1="12" y1="22"   x2="22" y2="8.5"/>
+                </svg>
+            </div>
+            <div>
+                <div class="header-title">OPERATOR // FICHA DE PERSONAGEM</div>
+                <div class="header-sub">sistema offline · rolador integrado · D&amp;D 5e</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button onclick="exportSheet()" class="btn btn-primary" style="display:inline-flex;align-items:center;gap:6px;">
+                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Exportar
+            </button>
+            <button onclick="document.getElementById('importFile').click()" class="btn" style="display:inline-flex;align-items:center;gap:6px;">
+                <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                Importar
+            </button>
+            <input type="file" id="importFile" style="display:none" accept=".json" onchange="importSheet(event)">
+            <button onclick="resetToDefault()" class="btn" style="border-color:rgba(255,34,51,.35);color:#ff8899;">Reiniciar</button>
+        </div>
+    </div>
+</header>
+<div class="status-bar">
+    <span class="status-dot"></span>
+    <span>SYS.ONLINE</span>
+    <span>MODO: OFFLINE</span>
+    <span>FICHA: D&amp;D 5E</span>
+    DADOS SALVOS NA SESSÃO
+</div>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════════════ -->
+<main class="wrap" style="margin-top:20px;">
+<div class="grid-12">
+
+    <!-- ─── COLUNA ESQUERDA ────────────────────────────────────────── -->
+    <div class="col-8 col-left">
+
+        <!-- BLOCO 1: PERSONAGEM -->
+        <section class="panel clip-corner card" style="position:relative;padding-top:20px;">
+            <span class="block-tag">&lt;OPERATOR.DATA&gt;</span>
+            <div class="char-grid">
+                <div class="space-y-4">
+                    <div>
+                        <label class="hud-label" style="display:block;margin-bottom:6px;">// Nome do Operador</label>
+                        <input type="text" id="char-name" onchange="updateData('name', this.value)"
+                               class="field field-name w-full" autocomplete="off">
+                    </div>
+                    <div class="grid-2">
+                        <div>
+                            <label class="hud-label" style="display:block;margin-bottom:6px;">// Classe &amp; Nível</label>
+                            <div class="class-row">
+                                <input type="text" id="char-class" onchange="updateData('class', this.value)" class="field" autocomplete="off">
+                                <input type="number" id="char-level" onchange="updateLevel(this.value)" min="1" max="20" class="field" autocomplete="off">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="hud-label" style="display:block;margin-bottom:6px;">// Origem / Raça</label>
+                            <input type="text" id="char-race" onchange="updateData('race', this.value)" class="field w-full" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="char-meta">
+                    <div class="span-2">
+                        <label class="hud-label" style="display:block;margin-bottom:6px;">// Agente / Jogador</label>
+                        <input type="text" id="char-player" onchange="updateData('player', this.value)" class="field w-full" autocomplete="off">
+                    </div>
+                    <div>
+                        <label class="hud-label" style="display:block;margin-bottom:6px;">// Background</label>
+                        <input type="text" id="char-background" onchange="updateData('background', this.value)" class="field w-full" autocomplete="off">
+                    </div>
+                    <div>
+                        <label class="hud-label" style="display:block;margin-bottom:6px;">// Alinhamento</label>
+                        <input type="text" id="char-alignment" onchange="updateData('alignment', this.value)" class="field w-full" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCO 2: COMBAT STATS -->
+        <section class="grid-4">
+
+            <!-- CA -->
+            <div class="panel combat-tile">
+                <span class="hud-label">Blindagem (CA)</span>
+                <div class="ac-wrap">
+                    <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    <input type="number" id="combat-ac" onchange="updateData('ac', this.value)">
+                </div>
+                <span class="tile-foot">CA</span>
+            </div>
+
+            <!-- INIT -->
+            <div class="panel combat-tile tile-clickable" onclick="rollInitiative()" title="Rolar Iniciativa">
+                <span class="hud-label">Iniciativa</span>
+                <span id="combat-init" class="big-val">+1</span>
+                <span class="tile-foot" style="color:rgba(57,255,20,.5);">[ EXECUTAR ]</span>
+            </div>
+
+            <!-- SPEED -->
+            <div class="panel combat-tile">
+                <span class="hud-label">Deslocamento</span>
+                <div class="speed-val">
+                    <input type="text" id="combat-speed" onchange="updateData('speed', this.value)">
+                    <span>m</span>
+                </div>
+                <span class="tile-foot">9m = 6 hex</span>
+            </div>
+
+            <!-- PROF BONUS -->
+            <div class="panel combat-tile">
+                <span class="hud-label">Prof. Bônus</span>
+                <span id="prof-bonus" class="big-val">+2</span>
+                <span class="tile-foot">AUTO / NÍVEL</span>
+            </div>
+
+        </section>
+
+        <!-- BLOCO 3: HP -->
+        <div class="grid-hp">
+            <div class="panel hp-card">
+                <div class="hp-header">
+                    <span class="heading" style="display:flex;align-items:center;">
+                        <span class="hp-dot"></span> PONTOS DE VIDA (PV)
+                    </span>
+                    <div class="hp-mods">
+                        <button onclick="modifyHP(-5)" class="btn-hp-sub">−5</button>
+                        <button onclick="modifyHP(-1)" class="btn-hp-sub">−1</button>
+                        <span class="label">MOD</span>
+                        <button onclick="modifyHP(1)"  class="btn-hp-add">+1</button>
+                        <button onclick="modifyHP(5)"  class="btn-hp-add">+5</button>
+                    </div>
+                </div>
+                <div class="hp-inputs">
+                    <div class="hp-box">
+                        <label class="hud-label" style="font-size:.52rem;">ATUAIS</label>
+                        <input type="number" id="hp-current" onchange="updateHP()">
+                    </div>
+                    <div class="hp-box max">
+                        <label class="hud-label" style="font-size:.52rem;">MÁXIMOS</label>
+                        <input type="number" id="hp-max" onchange="updateHP()">
+                    </div>
+                    <div class="hp-box temp">
+                        <label style="font-size:.52rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.1em;">TEMP</label>
+                        <input type="number" id="hp-temp" onchange="updateHP()" placeholder="0">
+                    </div>
+                </div>
+                <div class="hp-bar-track"><div id="hp-bar"></div></div>
+            </div>
+
+            <div class="panel dice-card">
+                <div>
+                    <div class="flex justify-between items-center" style="margin-bottom:8px;">
+                        <span class="hud-label">Dados de Vida</span>
+                        <button onclick="rollHitDice()" class="btn btn-primary" style="padding:3px 10px;font-size:.55rem;">» Rolar d12</button>
+                    </div>
+                    <div class="hitdice-row">
+                        <input type="text" id="combat-hitdice-current" onchange="updateData('hitDiceCurrent', this.value)" placeholder="Atuais">
+                        <span class="sep-val">/</span>
+                        <input type="text" id="combat-hitdice-total"   onchange="updateData('hitDiceTotal', this.value)"   placeholder="Total">
+                    </div>
+                </div>
+                <div>
+                    <span class="hud-label" style="display:block;margin-bottom:8px;">Resistência à Morte</span>
+                    <div class="death-saves">
+                        <div class="ds-row">
+                            <span style="font-size:.78rem;font-weight:700;color:var(--success);">Sucessos</span>
+                            <div class="ds-checks">
+                                <input type="checkbox" id="death-success-1" onchange="updateDeathSaves()" class="ds-success">
+                                <input type="checkbox" id="death-success-2" onchange="updateDeathSaves()" class="ds-success">
+                                <input type="checkbox" id="death-success-3" onchange="updateDeathSaves()" class="ds-success">
+                            </div>
+                        </div>
+                        <div class="ds-row">
+                            <span style="font-size:.78rem;font-weight:700;color:var(--danger);">Falhas</span>
+                            <div class="ds-checks">
+                                <input type="checkbox" id="death-fail-1" onchange="updateDeathSaves()" class="ds-fail">
+                                <input type="checkbox" id="death-fail-2" onchange="updateDeathSaves()" class="ds-fail">
+                                <input type="checkbox" id="death-fail-3" onchange="updateDeathSaves()" class="ds-fail">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BLOCO 4: ATRIBUTOS -->
+        <section class="attr-grid">
+            <div class="panel attr-tile">
+                <span class="hud-label" style="font-size:.52rem;">FORÇA</span>
+                <button onclick="rollStat('Força','str')" class="attr-btn"><span id="mod-str">+4</span></button>
+                <input type="number" id="val-str" onchange="calcModifier('str')" class="attr-val">
+            </div>
+            <div class="panel attr-tile">
+                <span class="hud-label" style="font-size:.52rem;">DESTREZA</span>
+                <button onclick="rollStat('Destreza','des')" class="attr-btn"><span id="mod-des">+1</span></button>
+                <input type="number" id="val-des" onchange="calcModifier('des')" class="attr-val">
+            </div>
+            <div class="panel attr-tile">
+                <span class="hud-label" style="font-size:.52rem;">CONSTITUIÇÃO</span>
+                <button onclick="rollStat('Constituição','con')" class="attr-btn"><span id="mod-con">+3</span></button>
+                <input type="number" id="val-con" onchange="calcModifier('con')" class="attr-val">
+            </div>
+            <div class="panel attr-tile">
+                <span class="hud-label" style="font-size:.52rem;">INTELIGÊNCIA</span>
+                <button onclick="rollStat('Inteligência','int')" class="attr-btn"><span id="mod-int">-1</span></button>
+                <input type="number" id="val-int" onchange="calcModifier('int')" class="attr-val">
+            </div>
+            <div class="panel attr-tile">
+                <span class="hud-label" style="font-size:.52rem;">SABEDORIA</span>
+                <button onclick="rollStat('Sabedoria','sab')" class="attr-btn"><span id="mod-sab">+0</span></button>
+                <input type="number" id="val-sab" onchange="calcModifier('sab')" class="attr-val">
+            </div>
+            <div class="panel attr-tile">
+                <span class="hud-label" style="font-size:.52rem;">CARISMA</span>
+                <button onclick="rollStat('Carisma','car')" class="attr-btn"><span id="mod-car">-1</span></button>
+                <input type="number" id="val-car" onchange="calcModifier('car')" class="attr-val">
+            </div>
+        </section>
+
+        <!-- BLOCO 5: ARMAS -->
+        <section class="panel card">
+            <div class="weapons-header">
+                <span class="heading" style="display:flex;align-items:center;gap:8px;">
+                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    Arsenal / Ataques
+                </span>
+                <button onclick="addWeapon()" class="btn btn-primary">+ Adicionar</button>
+            </div>
+            <div class="sep" style="margin-bottom:12px;"></div>
+            <div class="overflow-x">
+                <table class="weapons-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">Designação</th>
+                            <th style="text-align:center;">Bônus Atq</th>
+                            <th style="text-align:center;">Dano / Tipo</th>
+                            <th style="text-align:right;">Executar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weapons-list"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- BLOCO 6: INVENTÁRIO -->
+        <section class="grid-inv">
+            <div class="panel card space-y-4">
+                <span class="heading">// Mochila &amp; Recursos</span>
+                <div class="sep"></div>
+                <div class="coin-grid">
+                    <div class="coin-chip"><label style="color:var(--muted);">PC</label><input type="number" id="coin-pc" onchange="updateCoin('pc', this.value)"></div>
+                    <div class="coin-chip"><label style="color:#cd7f32;">PP</label><input type="number" id="coin-pp" onchange="updateCoin('pp', this.value)"></div>
+                    <div class="coin-chip"><label style="color:#888;">PE</label><input type="number" id="coin-pe" onchange="updateCoin('pe', this.value)"></div>
+                    <div class="coin-chip"><label style="color:#ffd700;">PO</label><input type="number" id="coin-po" onchange="updateCoin('po', this.value)"></div>
+                    <div class="coin-chip"><label style="color:var(--accent2);">PL</label><input type="number" id="coin-pl" onchange="updateCoin('pl', this.value)"></div>
+                </div>
+                <textarea id="equipment-text" onchange="updateData('equipment', this.value)" class="field w-full" style="height:148px;" placeholder="// Equipamentos, itens, consumíveis..."></textarea>
+            </div>
+            <div class="panel card space-y-4">
+                <span class="heading">// Proficiências &amp; Idiomas</span>
+                <div class="sep"></div>
+                <textarea id="prof-langs-text" onchange="updateData('profAndLangs', this.value)" class="field w-full" style="height:192px;" placeholder="// Idiomas, treinamentos, proficiências especiais..."></textarea>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ─── COLUNA DIREITA ─────────────────────────────────────────── -->
+    <div class="col-4 col-right">
+
+        <!-- ROLADOR -->
+        <section class="roller-card">
+            <div class="flex justify-between items-center" style="margin-bottom:14px;">
+                <span class="heading"><span class="pulse-dot"></span>ROLLER // D20</span>
+                <button onclick="clearRollLog()" class="btn" style="padding:2px 8px;font-size:.55rem;">[ LIMPAR ]</button>
+            </div>
+
+            <div class="dice-display" style="margin-bottom:14px;">
+                <div class="dice-graphic-wrap" id="dice-container">
+                    <div id="dice-graphic">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/>
+                            <line x1="2"  y1="8.5"  x2="22" y2="8.5"/>
+                            <line x1="2"  y1="15.5" x2="22" y2="15.5"/>
+                            <line x1="12" y1="2"    x2="2"  y2="15.5"/>
+                            <line x1="12" y1="2"    x2="22" y2="15.5"/>
+                            <line x1="12" y1="22"   x2="2"  y2="8.5"/>
+                            <line x1="12" y1="22"   x2="22" y2="8.5"/>
+                        </svg>
+                        <span id="dice-result-val">—</span>
+                    </div>
+                </div>
+                <p id="dice-label">—</p>
+                <div id="dice-roll-total" class="hidden">Total: —</div>
+                <div id="dice-formula"    class="hidden">—</div>
+            </div>
+
+            <span class="hud-label" style="display:block;margin-bottom:8px;">&gt; LOG DE ROLAGENS</span>
+            <div id="roll-log-list" class="roll-log">
+                <div class="log-empty">// nenhuma rolagem registrada</div>
+            </div>
+        </section>
+
+        <!-- SALVAMENTOS -->
+        <section class="panel card space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="heading">Resistências</span>
+                <span class="mono" style="font-size:.58rem;color:var(--muted);">☑ = proficiente</span>
+            </div>
+            <div class="sep"></div>
+            <div class="save-grid">
+                <div class="space-y-2">
+                    <div class="skill-row">
+                        <div class="skill-row-left">
+                            <input type="checkbox" id="save-prof-str" onchange="updateSavesAndSkills()" class="skill-check">
+                            <button onclick="rollSave('Força','str')" class="skill-btn">FOR</button>
+                        </div>
+                        <span id="save-val-str" class="skill-val">+4</span>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-row-left">
+                            <input type="checkbox" id="save-prof-des" onchange="updateSavesAndSkills()" class="skill-check">
+                            <button onclick="rollSave('Destreza','des')" class="skill-btn">DES</button>
+                        </div>
+                        <span id="save-val-des" class="skill-val">+1</span>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-row-left">
+                            <input type="checkbox" id="save-prof-con" onchange="updateSavesAndSkills()" class="skill-check">
+                            <button onclick="rollSave('Constituição','con')" class="skill-btn">CON</button>
+                        </div>
+                        <span id="save-val-con" class="skill-val">+3</span>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="skill-row">
+                        <div class="skill-row-left">
+                            <input type="checkbox" id="save-prof-int" onchange="updateSavesAndSkills()" class="skill-check">
+                            <button onclick="rollSave('Inteligência','int')" class="skill-btn">INT</button>
+                        </div>
+                        <span id="save-val-int" class="skill-val">-1</span>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-row-left">
+                            <input type="checkbox" id="save-prof-sab" onchange="updateSavesAndSkills()" class="skill-check">
+                            <button onclick="rollSave('Sabedoria','sab')" class="skill-btn">SAB</button>
+                        </div>
+                        <span id="save-val-sab" class="skill-val">+0</span>
+                    </div>
+                    <div class="skill-row">
+                        <div class="skill-row-left">
+                            <input type="checkbox" id="save-prof-car" onchange="updateSavesAndSkills()" class="skill-check">
+                            <button onclick="rollSave('Carisma','car')" class="skill-btn">CAR</button>
+                        </div>
+                        <span id="save-val-car" class="skill-val">-1</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PERÍCIAS -->
+        <section class="panel card space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="heading">Perícias // Skills</span>
+                <span class="mono" style="font-size:.58rem;color:var(--muted);">[ toque → rolar ]</span>
+            </div>
+            <div class="sep"></div>
+            <div id="skills-list" class="space-y-2" style="max-height:380px;overflow-y:auto;padding-right:4px;"></div>
+        </section>
+
+        <!-- CARACTERÍSTICAS -->
+        <section class="panel card space-y-3">
+            <span class="heading">Habilidades &amp; Traços</span>
+            <div class="sep"></div>
+            <textarea id="features-text" onchange="updateData('features', this.value)"
+                      class="field w-full" style="height:220px;"
+                      placeholder="// FÚRIA, sentido de perigo, habilidades especiais..."></textarea>
+        </section>
+
+    </div>
+
+</div><!-- /grid-12 -->
+</main>
+
+<!-- ══ TOAST ══════════════════════════════════════════════════════════ -->
+<div id="dice-toast">
+    <div class="toast-inner">
+        <div id="toast-dice-result">—</div>
+        <div>
+            <div id="toast-dice-title">Rolagem</div>
+            <div id="toast-dice-total">Total: —</div>
+            <div id="toast-dice-formula">—</div>
+        </div>
+    </div>
+</div>
+
+<!-- ══ SCRIPT ═════════════════════════════════════════════════════════ -->
+<script>
+    // --- 1. DADOS PADRÃO ---
+    const DEFAULT_SHEET = {
+        name: "nome do personagem", class: "Bárbaro", level: 1, race: "Anão",
+        player: "Nome do Jogador", background: "Herói do Povo", alignment: "Caótico e Neutro",
+        ac: 15, speed: "9", hitDiceCurrent: "1", hitDiceTotal: "1d12",
+        hp: { current: 15, max: 15, temp: 0 },
+        deathSaves: { successes: [false, false, false], failures: [false, false, false] },
+        stats: { str: 18, des: 12, con: 16, int: 8, sab: 10, car: 8 },
+        saveProfs: { str: true, des: false, con: true, int: false, sab: false, car: false },
+        skills: {
+            acrobatics:      { prof: false, stat: 'des', name: "Acrobacia" },
+            animal_handling: { prof: false, stat: 'sab', name: "Adestrar Animais" },
+            arcana:          { prof: false, stat: 'int', name: "Arcanismo" },
+            athletics:       { prof: true,  stat: 'str', name: "Atletismo" },
+            deception:       { prof: false, stat: 'car', name: "Enganação" },
+            history:         { prof: false, stat: 'int', name: "História" },
+            insight:         { prof: false, stat: 'sab', name: "Intuição" },
+            intimidation:    { prof: true,  stat: 'car', name: "Intimidação" },
+            investigation:   { prof: false, stat: 'int', name: "Investigação" },
+            medicine:        { prof: false, stat: 'sab', name: "Medicina" },
+            nature:          { prof: false, stat: 'int', name: "Natureza" },
+            perception:      { prof: false, stat: 'sab', name: "Percepção" },
+            performance:     { prof: false, stat: 'car', name: "Atuação" },
+            persuasion:      { prof: false, stat: 'car', name: "Persuasão" },
+            religion:        { prof: false, stat: 'int', name: "Religião" },
+            sleight_of_hand: { prof: false, stat: 'des', name: "Prestidigitação" },
+            stealth:         { prof: false, stat: 'des', name: "Furtividade" },
+            survival:        { prof: true,  stat: 'sab', name: "Sobrevivência" }
+        },
+        weapons: [
+            { name: "Machado de Batalha de Uma Mão", bonusAtk: "+6", damage: "1d8+4", damageType: "Cortante", id: 1 },
+            { name: "Machadinha (Arremessável)",     bonusAtk: "+6", damage: "1d6+4", damageType: "Cortante", id: 2 }
+        ],
+        equipment:    "Armadura de Couro Batido, Machado de Batalha, 2x Machadinhas, Mochila de Explorador, Rações de Viagem, Saco de Dormir.",
+        profAndLangs: "Idiomas: Comum, Anão.\nProficiência em Ferramentas de Pedreiro.\nArmas Simples e Marciais.",
+        features:     "FÚRIA (2x ao dia):\nNo seu turno, você pode entrar em fúria como ação bônus. Vantagem em Força e salvamentos de Força. Bônus de dano +2. Resistência a concussão, cortante e perfurante.\n\nDEFESA SEM ARMADURA:\nCA = 10 + Mod DES + Mod CON.\n\nRESILIÊNCIA ANÃ:\nVantagem contra venenos e resistência a dano de veneno.",
+        coins: { pc: 0, pp: 0, pe: 0, po: 15, pl: 0 }
+    };
+
+    let currentSheet = {};
+
+    // --- 2. AUDIO ---
+    function playDiceSound() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            for (let i = 0; i < 4; i++) {
+                const delay = i * 0.12;
+                const osc = ctx.createOscillator(), gain = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(100 + Math.random() * 80, ctx.currentTime + delay);
+                osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + delay + 0.08);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime + delay);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + 0.08);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(ctx.currentTime + delay); osc.stop(ctx.currentTime + delay + 0.08);
+            }
+        } catch (e) {}
+    }
+
+    // --- 3. INIT ---
+    window.onload = function() { loadSheet(); };
+
+    function loadSheet() {
+        const saved = sessionStorage.getItem('rpg_character_sheet_data');
+        if (saved) {
+            try { currentSheet = { ...DEFAULT_SHEET, ...JSON.parse(saved) }; }
+            catch (e) { currentSheet = JSON.parse(JSON.stringify(DEFAULT_SHEET)); }
+        } else {
+            currentSheet = JSON.parse(JSON.stringify(DEFAULT_SHEET));
+        }
+        renderAll();
+    }
+
+    function saveSheetToStorage() {
+        sessionStorage.setItem('rpg_character_sheet_data', JSON.stringify(currentSheet));
+    }
+
+    // --- 4. RENDER ---
+    function renderAll() {
+        document.getElementById('char-name').value      = currentSheet.name;
+        document.getElementById('char-class').value     = currentSheet.class;
+        document.getElementById('char-level').value     = currentSheet.level;
+        document.getElementById('char-race').value      = currentSheet.race;
+        document.getElementById('char-player').value    = currentSheet.player;
+        document.getElementById('char-background').value= currentSheet.background;
+        document.getElementById('char-alignment').value = currentSheet.alignment;
+        document.getElementById('combat-ac').value      = currentSheet.ac;
+        document.getElementById('combat-speed').value   = currentSheet.speed;
+        document.getElementById('combat-hitdice-current').value = currentSheet.hitDiceCurrent;
+        document.getElementById('combat-hitdice-total').value   = currentSheet.hitDiceTotal;
+        for (let stat in currentSheet.stats)
+            document.getElementById(`val-${stat}`).value = currentSheet.stats[stat];
+        document.getElementById('coin-pc').value = currentSheet.coins.pc;
+        document.getElementById('coin-pp').value = currentSheet.coins.pp;
+        document.getElementById('coin-pe').value = currentSheet.coins.pe;
+        document.getElementById('coin-po').value = currentSheet.coins.po;
+        document.getElementById('coin-pl').value = currentSheet.coins.pl;
+        document.getElementById('equipment-text').value  = currentSheet.equipment;
+        document.getElementById('prof-langs-text').value = currentSheet.profAndLangs;
+        document.getElementById('features-text').value   = currentSheet.features;
+        for (let save in currentSheet.saveProfs)
+            document.getElementById(`save-prof-${save}`).checked = currentSheet.saveProfs[save];
+        document.getElementById('hp-current').value = currentSheet.hp.current;
+        document.getElementById('hp-max').value     = currentSheet.hp.max;
+        document.getElementById('hp-temp').value    = currentSheet.hp.temp || 0;
+        for (let i = 1; i <= 3; i++) {
+            document.getElementById(`death-success-${i}`).checked = currentSheet.deathSaves.successes[i-1];
+            document.getElementById(`death-fail-${i}`).checked    = currentSheet.deathSaves.failures[i-1];
+        }
+        recalculateAll();
+    }
+
+    function recalculateAll() {
+        const level = parseInt(currentSheet.level) || 1;
+        const profBonus = Math.ceil(level / 4) + 1;
+        document.getElementById('prof-bonus').textContent = `+${profBonus}`;
+        const mods = {};
+        for (let stat in currentSheet.stats) {
+            const val = parseInt(currentSheet.stats[stat]) || 10;
+            const mod = Math.floor((val - 10) / 2);
+            mods[stat] = mod;
+            document.getElementById(`mod-${stat}`).textContent = `${mod >= 0 ? '+' : ''}${mod}`;
+        }
+        const initSign = mods.des >= 0 ? '+' : '';
+        document.getElementById('combat-init').textContent = `${initSign}${mods.des}`;
+        for (let stat in currentSheet.saveProfs) {
+            let totalSave = mods[stat];
+            if (currentSheet.saveProfs[stat]) totalSave += profBonus;
+            document.getElementById(`save-val-${stat}`).textContent = `${totalSave >= 0 ? '+' : ''}${totalSave}`;
+        }
+        const cur = parseInt(currentSheet.hp.current) || 0;
+        const max = parseInt(currentSheet.hp.max) || 1;
+        const temp = parseInt(currentSheet.hp.temp) || 0;
+        const pct = Math.min(100, Math.max(0, ((cur + temp) / max) * 100));
+        document.getElementById('hp-bar').style.width = `${pct}%`;
+        renderSkills(mods, profBonus);
+        renderWeapons();
+    }
+
+    // --- 5. SKILLS ---
+    function renderSkills(mods, profBonus) {
+        const container = document.getElementById('skills-list');
+        container.innerHTML = '';
+        for (let skillKey in currentSheet.skills) {
+            const skill = currentSheet.skills[skillKey];
+            const total = (mods[skill.stat] || 0) + (skill.prof ? profBonus : 0);
+            const sign  = total >= 0 ? '+' : '';
+            const div = document.createElement('div');
+            div.className = 'skill-row';
+            div.innerHTML = `
+                <div class="skill-row-left">
+                    <input type="checkbox" onchange="toggleSkillProf('${skillKey}')" ${skill.prof ? 'checked' : ''} class="skill-check">
+                    <button onclick="rollSkill('${skill.name}', ${total}, '${skill.stat.toUpperCase()}')" class="skill-btn">
+                        ${skill.name}<span class="skill-attr">(${skill.stat.toUpperCase()})</span>
+                    </button>
+                </div>
+                <span class="skill-val">${sign}${total}</span>
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    // --- 6. WEAPONS ---
+    function renderWeapons() {
+        const container = document.getElementById('weapons-list');
+        container.innerHTML = '';
+        if (currentSheet.weapons.length === 0) {
+            container.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:16px;font-style:italic;font-size:.8rem;">// nenhum item no arsenal</td></tr>`;
+            return;
+        }
+        currentSheet.weapons.forEach((weapon, index) => {
+            const tr = document.createElement('tr');
+            tr.className = 'weapon-row';
+            tr.innerHTML = `
+                <td style="padding:8px 4px;">
+                    <div class="flex items-center gap-2">
+                        <button onclick="deleteWeapon(${index})" class="btn-danger-sm">✕</button>
+                        <input type="text" value="${weapon.name}" onchange="editWeapon(${index},'name',this.value)" class="weapon-input" style="width:100%;">
+                    </div>
+                </td>
+                <td style="padding:8px 4px;text-align:center;">
+                    <input type="text" value="${weapon.bonusAtk}" onchange="editWeapon(${index},'bonusAtk',this.value)" class="weapon-input" style="width:44px;text-align:center;color:var(--accent);">
+                </td>
+                <td style="padding:8px 4px;text-align:center;">
+                    <div class="flex items-center justify-center gap-2">
+                        <input type="text" value="${weapon.damage}"     onchange="editWeapon(${index},'damage',this.value)"     class="weapon-input" style="width:52px;text-align:center;font-weight:700;">
+                        <input type="text" value="${weapon.damageType}" onchange="editWeapon(${index},'damageType',this.value)" class="weapon-input" style="width:52px;text-align:center;color:var(--muted);font-size:.7rem;">
+                    </div>
+                </td>
+                <td style="padding:8px 4px;text-align:right;">
+                    <div class="flex justify-end gap-2">
+                        <button onclick="rollWeaponAtk('${weapon.name}','${weapon.bonusAtk}')" class="btn btn-primary" style="padding:3px 8px;">ATK</button>
+                        <button onclick="rollWeaponDamage('${weapon.name}','${weapon.damage}')" class="btn" style="padding:3px 8px;border-color:rgba(0,229,255,.3);color:var(--accent2);">DMG</button>
+                    </div>
+                </td>
+            `;
+            container.appendChild(tr);
+        });
+    }
+
+    // --- 7. ESTADO ---
+    function updateData(key, value) { currentSheet[key] = value; saveSheetToStorage(); }
+    function updateLevel(val)       { currentSheet.level = parseInt(val)||1; saveSheetToStorage(); recalculateAll(); }
+    function updateCoin(key, val)   { currentSheet.coins[key] = parseInt(val)||0; saveSheetToStorage(); }
+    function calcModifier(stat) {
+        currentSheet.stats[stat] = parseInt(document.getElementById(`val-${stat}`).value)||10;
+        saveSheetToStorage(); recalculateAll();
+    }
+    function toggleSkillProf(skillKey) { currentSheet.skills[skillKey].prof = !currentSheet.skills[skillKey].prof; saveSheetToStorage(); recalculateAll(); }
+    function updateSavesAndSkills() {
+        for (let stat in currentSheet.saveProfs)
+            currentSheet.saveProfs[stat] = document.getElementById(`save-prof-${stat}`).checked;
+        saveSheetToStorage(); recalculateAll();
+    }
+    function updateHP() {
+        currentSheet.hp.current = parseInt(document.getElementById('hp-current').value)||0;
+        currentSheet.hp.max     = parseInt(document.getElementById('hp-max').value)||1;
+        currentSheet.hp.temp    = parseInt(document.getElementById('hp-temp').value)||0;
+        saveSheetToStorage(); recalculateAll();
+    }
+    function modifyHP(amount) {
+        const cur = parseInt(document.getElementById('hp-current').value)||0;
+        const max = parseInt(document.getElementById('hp-max').value)||1;
+        document.getElementById('hp-current').value = Math.min(max, Math.max(0, cur+amount));
+        updateHP();
+    }
+    function updateDeathSaves() {
+        for (let i=1;i<=3;i++) {
+            currentSheet.deathSaves.successes[i-1] = document.getElementById(`death-success-${i}`).checked;
+            currentSheet.deathSaves.failures[i-1]  = document.getElementById(`death-fail-${i}`).checked;
+        }
+        saveSheetToStorage();
+    }
+    function editWeapon(index, field, value) { currentSheet.weapons[index][field] = value; saveSheetToStorage(); }
+    function addWeapon() {
+        currentSheet.weapons.push({ name:"Nova Arma", bonusAtk:"+0", damage:"1d6", damageType:"Dano", id:Date.now() });
+        saveSheetToStorage(); recalculateAll();
+    }
+    function deleteWeapon(index) { currentSheet.weapons.splice(index,1); saveSheetToStorage(); recalculateAll(); }
+
+    // --- 8. ROLAGEM ---
+    let rollHistory = [];
+
+    function executeRollAnimation(label, modifier, callback) {
+        playDiceSound();
+        const dg = document.getElementById('dice-graphic');
+        const rv = document.getElementById('dice-result-val');
+        dg.classList.remove('rolling-dice');
+        void dg.offsetWidth;
+        dg.classList.add('rolling-dice');
+        let spins = 0;
+        const interval = setInterval(() => {
+            rv.textContent = Math.floor(Math.random() * 20) + 1;
+            if (++spins > 6) { clearInterval(interval); callback(); }
+        }, 70);
+    }
+
+    function addLogEntry(title, formula, total, naturalRoll) {
+        const list = document.getElementById('roll-log-list');
+        if (rollHistory.length === 0) list.innerHTML = '';
+        const ts = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+        const isCrit = naturalRoll === 20, isFail = naturalRoll === 1;
+        const natColor = isCrit ? 'var(--success)' : isFail ? 'var(--danger)' : 'var(--muted)';
+        const bonusText = isCrit ? ' [CRÍTICO]' : isFail ? ' [FALHA TOTAL]' : '';
+
+        if (isCrit) {
+            const dd = document.querySelector('.dice-display');
+            dd.classList.remove('crit-flash'); void dd.offsetWidth; dd.classList.add('crit-flash');
+        }
+
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        if (isCrit) entry.style.borderColor = 'rgba(57,255,20,.3)';
+        if (isFail) entry.style.borderColor = 'rgba(255,34,51,.3)';
+        entry.innerHTML = `
+            <div class="log-entry-head">
+                <span style="color:var(--accent);text-transform:uppercase;letter-spacing:.08em;">${title}</span>
+                <span style="color:var(--muted);">${ts}</span>
+            </div>
+            <div class="log-entry-body">
+                <span class="log-formula">${formula} <span style="color:${natColor};font-weight:700;">[${naturalRoll}${bonusText}]</span></span>
+                <span class="log-total" style="color:${isCrit ? 'var(--success)' : isFail ? 'var(--danger)' : 'var(--text)'};">${total}</span>
+            </div>
+        `;
+        list.insertAdjacentElement('afterbegin', entry);
+        rollHistory.unshift({ title, formula, total, naturalRoll });
+        showToast(title, total, formula, naturalRoll);
+    }
+
+    function showToast(title, total, formula, naturalRoll) {
+        const toast = document.getElementById('dice-toast');
+        const isCrit = naturalRoll === 20, isFail = naturalRoll === 1;
+        document.getElementById('toast-dice-result').textContent  = naturalRoll;
+        document.getElementById('toast-dice-title').textContent   = title;
+        document.getElementById('toast-dice-total').textContent   = `Total: ${total}`;
+        document.getElementById('toast-dice-formula').textContent = formula;
+        const res = document.getElementById('toast-dice-result');
+        res.style.background   = isCrit ? 'rgba(57,255,20,.2)'  : isFail ? 'rgba(255,34,51,.2)' : 'rgba(57,255,20,.1)';
+        res.style.borderColor  = isCrit ? 'rgba(57,255,20,.6)'  : isFail ? 'rgba(255,34,51,.6)' : 'rgba(57,255,20,.4)';
+        res.style.color        = isCrit ? 'var(--success)'      : isFail ? 'var(--danger)' : 'var(--accent)';
+        document.getElementById('toast-dice-total').style.color   = isCrit ? 'var(--success)' : isFail ? 'var(--danger)' : 'var(--accent)';
+        toast.classList.add('visible');
+        clearTimeout(window.toastTimeout);
+        window.toastTimeout = setTimeout(() => toast.classList.remove('visible'), 4000);
+    }
+
+    function rollStat(statName, statKey) {
+        const mod = Math.floor(((parseInt(currentSheet.stats[statKey])||10) - 10) / 2);
+        executeRollAnimation(statName, mod, () => {
+            const roll = Math.floor(Math.random()*20)+1, total = roll+mod, sign = mod>=0?'+':'';
+            document.getElementById('dice-result-val').textContent = roll;
+            document.getElementById('dice-label').textContent = statName;
+            document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+            document.getElementById('dice-roll-total').classList.remove('hidden');
+            document.getElementById('dice-formula').textContent = `1d20 ${sign} ${mod} (${statName})`;
+            document.getElementById('dice-formula').classList.remove('hidden');
+            addLogEntry(`Atributo: ${statName}`, `1d20 ${sign}${mod}`, total, roll);
+        });
+    }
+
+    function rollSave(statName, statKey) {
+        const mod = Math.floor(((parseInt(currentSheet.stats[statKey])||10) - 10) / 2);
+        const profBonus = Math.ceil((parseInt(currentSheet.level)||1) / 4) + 1;
+        const totalMod = mod + (currentSheet.saveProfs[statKey] ? profBonus : 0);
+        executeRollAnimation(`Salvamento ${statName}`, totalMod, () => {
+            const roll = Math.floor(Math.random()*20)+1, total = roll+totalMod, sign = totalMod>=0?'+':'';
+            document.getElementById('dice-result-val').textContent = roll;
+            document.getElementById('dice-label').textContent = `Salvar ${statName}`;
+            document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+            document.getElementById('dice-roll-total').classList.remove('hidden');
+            document.getElementById('dice-formula').textContent = `1d20 ${sign} ${totalMod}`;
+            document.getElementById('dice-formula').classList.remove('hidden');
+            addLogEntry(`Salvamento: ${statName}`, `1d20 ${sign}${totalMod}`, total, roll);
+        });
+    }
+
+    function rollSkill(skillName, bonusValue, attr) {
+        executeRollAnimation(`Perícia ${skillName}`, bonusValue, () => {
+            const roll = Math.floor(Math.random()*20)+1, total = roll+bonusValue, sign = bonusValue>=0?'+':'';
+            document.getElementById('dice-result-val').textContent = roll;
+            document.getElementById('dice-label').textContent = skillName;
+            document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+            document.getElementById('dice-roll-total').classList.remove('hidden');
+            document.getElementById('dice-formula').textContent = `1d20 ${sign} ${bonusValue} (${attr})`;
+            document.getElementById('dice-formula').classList.remove('hidden');
+            addLogEntry(`Perícia: ${skillName}`, `1d20 ${sign}${bonusValue}`, total, roll);
+        });
+    }
+
+    function rollInitiative() {
+        const mod = Math.floor(((parseInt(currentSheet.stats.des)||10) - 10) / 2);
+        executeRollAnimation("Iniciativa", mod, () => {
+            const roll = Math.floor(Math.random()*20)+1, total = roll+mod, sign = mod>=0?'+':'';
+            document.getElementById('dice-result-val').textContent = roll;
+            document.getElementById('dice-label').textContent = "Iniciativa";
+            document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+            document.getElementById('dice-roll-total').classList.remove('hidden');
+            document.getElementById('dice-formula').textContent = `1d20 ${sign} ${mod} (Iniciativa)`;
+            document.getElementById('dice-formula').classList.remove('hidden');
+            addLogEntry("Iniciativa", `1d20 ${sign}${mod}`, total, roll);
+        });
+    }
+
+    function rollHitDice() {
+        playDiceSound();
+        const dg = document.getElementById('dice-graphic'), rv = document.getElementById('dice-result-val');
+        dg.classList.remove('rolling-dice'); void dg.offsetWidth; dg.classList.add('rolling-dice');
+        let spins = 0;
+        const interval = setInterval(() => {
+            rv.textContent = Math.floor(Math.random()*12)+1;
+            if (++spins > 6) {
+                clearInterval(interval);
+                const roll = Math.floor(Math.random()*12)+1;
+                const modCon = Math.floor(((parseInt(currentSheet.stats.con)||10) - 10) / 2);
+                const total = roll + modCon;
+                rv.textContent = roll;
+                document.getElementById('dice-label').textContent = "Dados de Vida (d12)";
+                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+                document.getElementById('dice-roll-total').classList.remove('hidden');
+                document.getElementById('dice-formula').textContent = `1d12 + ${modCon} (CON)`;
+                document.getElementById('dice-formula').classList.remove('hidden');
+                addLogEntry("Dado de Vida (d12)", `1d12 + ${modCon}`, total, roll);
+            }
+        }, 70);
+    }
+
+    function rollWeaponAtk(weaponName, bonusText) {
+        const bonus = parseInt(bonusText.replace('+',''))||0;
+        executeRollAnimation(`${weaponName} (ATK)`, bonus, () => {
+            const roll = Math.floor(Math.random()*20)+1, total = roll+bonus, sign = bonus>=0?'+':'';
+            document.getElementById('dice-result-val').textContent = roll;
+            document.getElementById('dice-label').textContent = "ATK: " + weaponName;
+            document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
+            document.getElementById('dice-roll-total').classList.remove('hidden');
+            document.getElementById('dice-formula').textContent = `1d20 ${sign} ${bonus}`;
+            document.getElementById('dice-formula').classList.remove('hidden');
+            addLogEntry(`ATK: ${weaponName}`, `1d20 ${sign}${bonus}`, total, roll);
+        });
+    }
+
+    function rollWeaponDamage(weaponName, damageFormula) {
+        playDiceSound();
+        try {
+            const clean = damageFormula.replace(/\s+/g,'').toLowerCase();
+            const parts = clean.split(/([+-])/);
+            const ds    = parts[0].split('d');
+            const numDice = parseInt(ds[0])||1, diceSides = parseInt(ds[1])||6;
+            let modifier = 0;
+            if (parts.length > 1) modifier = (parts[1]==='+' ? 1 : -1) * (parseInt(parts[2])||0);
+            const dg = document.getElementById('dice-graphic'), rv = document.getElementById('dice-result-val');
+            dg.classList.remove('rolling-dice'); void dg.offsetWidth; dg.classList.add('rolling-dice');
+            let spins = 0;
+            const interval = setInterval(() => {
+                rv.textContent = Math.floor(Math.random()*diceSides)+1;
+                if (++spins > 6) {
+                    clearInterval(interval);
+                    let rolls = [], diceTotal = 0;
+                    for (let i=0;i<numDice;i++) { const r=Math.floor(Math.random()*diceSides)+1; rolls.push(r); diceTotal+=r; }
+                    const total = diceTotal + modifier, sign = modifier>=0?'+':'';
+                    rv.textContent = total;
+                    document.getElementById('dice-label').textContent = "DMG: " + weaponName;
+                    document.getElementById('dice-roll-total').textContent = `${total} Dano`;
+                    document.getElementById('dice-roll-total').classList.remove('hidden');
+                    document.getElementById('dice-formula').textContent = `Rolagens: [${rolls.join(', ')}] ${modifier!==0?sign+modifier:''}`;
+                    document.getElementById('dice-formula').classList.remove('hidden');
+                    // Log entry
+                    const list = document.getElementById('roll-log-list');
+                    if (rollHistory.length === 0) list.innerHTML = '';
+                    const ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+                    const entry = document.createElement('div');
+                    entry.className = 'log-entry';
+                    entry.style.borderColor = 'rgba(0,229,255,.22)';
+                    entry.innerHTML = `
+                        <div class="log-entry-head">
+                            <span style="color:var(--accent2);text-transform:uppercase;">DMG: ${weaponName}</span>
+                            <span style="color:var(--muted);">${ts}</span>
+                        </div>
+                        <div class="log-entry-body">
+                            <span class="log-formula">${damageFormula} (${rolls.join('+')})</span>
+                            <span class="log-total" style="color:var(--accent2);">${total}</span>
+                        </div>`;
+                    list.insertAdjacentElement('afterbegin', entry);
+                    rollHistory.unshift({ title:`DMG:${weaponName}`, formula:damageFormula, total, naturalRoll:diceTotal });
+                    showToast(`DMG: ${weaponName}`, `${total} (${clean})`, `[${rolls.join('+')}] ${modifier!==0?sign+modifier:''}`, total);
+                }
+            }, 70);
+        } catch(err) { alert("Erro ao ler fórmula. Use: '1d8+4', '2d6', etc."); }
+    }
+
+    function clearRollLog() {
+        rollHistory = [];
+        document.getElementById('roll-log-list').innerHTML = '<div class="log-empty">// nenhuma rolagem registrada</div>';
+    }
+
+    // --- 9. EXPORT / IMPORT / RESET ---
+    function exportSheet() {
+        const blob = new Blob([JSON.stringify(currentSheet, null, 2)], {type:'application/json'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `Ficha_${currentSheet.name.replace(/\s+/g,'_')}.json`;
+        a.click(); URL.revokeObjectURL(a.href);
+    }
+
+    function importSheet(event) {
+        const file = event.target.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                currentSheet = { ...DEFAULT_SHEET, ...JSON.parse(e.target.result) };
+                saveSheetToStorage(); renderAll();
+                showCustomMessage("// SYNC OK", "Ficha carregada com sucesso.");
+            } catch(err) { showCustomMessage("// ERRO", "JSON inválido ou incompatível."); }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    function resetToDefault() {
+        if (!confirm("Reiniciar para os dados padrão? Isso apagará as alterações atuais.")) return;
+        currentSheet = JSON.parse(JSON.stringify(DEFAULT_SHEET));
+        saveSheetToStorage(); renderAll();
+    }
+
+    function showCustomMessage(title, text) {
+        document.getElementById('toast-dice-result').textContent = 'i';
+        document.getElementById('toast-dice-result').style.background  = 'rgba(57,255,20,.1)';
+        document.getElementById('toast-dice-result').style.borderColor = 'rgba(57,255,20,.4)';
+        document.getElementById('toast-dice-result').style.color = 'var(--accent)';
+        document.getElementById('toast-dice-title').textContent   = title;
+        document.getElementById('toast-dice-total').textContent   = text;
+        document.getElementById('toast-dice-total').style.color   = 'var(--accent)';
+        document.getElementById('toast-dice-formula').textContent = 'D&D 5e';
+        const toast = document.getElementById('dice-toast');
+        toast.classList.add('visible');
+        clearTimeout(window.toastTimeout);
+        window.toastTimeout = setTimeout(() => toast.classList.remove('visible'), 4000);
+    }
+</script>
+</body>
+</html>
