@@ -199,20 +199,71 @@
         }
 
         .dice-style-2 {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(5, 7, 14, 0.8);
+            border: 1px solid rgba(212, 168, 67, 0.14);
+            border-radius: 18px;
+            box-shadow: 0 0 40px rgba(212, 168, 67, 0.06), inset 0 1px 0 rgba(212, 168, 67, 0.12);
             backdrop-filter: blur(12px);
-            box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.03);
+        }
+
+        .dice-style-2::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(212, 168, 67, 0.12), transparent 70%);
+            pointer-events: none;
+        }
+
+        .dice-style-2 .dice-graphic {
+            width: 70%;
+            height: 70%;
+            perspective: 300px;
+            animation: dice-idle 8s infinite linear;
+        }
+
+        .dice-style-2 .dice-graphic .dice-inner {
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            position: relative;
         }
 
         .dice-style-2 .d-face {
             position: absolute;
-            inset: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #e2e8f0;
-            opacity: 0.9;
+            border-radius: 10px;
+            background: rgba(212, 168, 67, 0.04);
+            border: 1px solid rgba(212, 168, 67, 0.22);
+            box-shadow: inset 0 0 18px rgba(212, 168, 67, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            color: rgba(212, 168, 67, 0.9);
+            font-size: 0.75rem;
+        }
+
+        .dice-style-2 .d-face.front { transform: translateZ(40px); }
+        .dice-style-2 .d-face.back  { transform: rotateY(180deg) translateZ(40px); }
+        .dice-style-2 .d-face.right { transform: rotateY(90deg) translateZ(40px); }
+        .dice-style-2 .d-face.left  { transform: rotateY(-90deg) translateZ(40px); }
+        .dice-style-2 .d-face.top   { transform: rotateX(90deg) translateZ(40px); }
+        .dice-style-2 .d-face.bot   { transform: rotateX(-90deg) translateZ(40px); }
+
+        .dice-style-2 .dice-value {
+            font-size: 1.05rem;
+            color: var(--accent);
+            text-shadow: 0 0 14px rgba(212, 168, 67, 0.8);
+        }
+
+        @keyframes dice-idle {
+            from { transform: rotateX(12deg) rotateY(0deg) rotateZ(3deg); }
+            to   { transform: rotateX(12deg) rotateY(360deg) rotateZ(3deg); }
         }
 
         .dice-style-3 {
@@ -282,12 +333,14 @@
                 <div class="card-meta">
                     <div class="dice-preview dice-style-2">
                         <div class="dice-graphic">
-                            <div class="d-face front"><span class="dice-value">—</span></div>
-                            <div class="d-face back"><span class="dice-value">⬡</span></div>
-                            <div class="d-face right"><span class="dice-value">✦</span></div>
-                            <div class="d-face left"><span class="dice-value">⚔</span></div>
-                            <div class="d-face top"><span class="dice-value">◈</span></div>
-                            <div class="d-face bot"><span class="dice-value">❋</span></div>
+                            <div class="dice-inner">
+                                <div class="d-face front"><span class="dice-value">—</span></div>
+                                <div class="d-face back"><span class="dice-value">⬡</span></div>
+                                <div class="d-face right"><span class="dice-value">✦</span></div>
+                                <div class="d-face left"><span class="dice-value">⚔</span></div>
+                                <div class="d-face top"><span class="dice-value">◈</span></div>
+                                <div class="d-face bot"><span class="dice-value">❋</span></div>
+                            </div>
                         </div>
                     </div>
                     <a class="link-button" href="./rpg-sheet-vanilla/ficha_rpg_moderna.html">Abrir ficha</a>
