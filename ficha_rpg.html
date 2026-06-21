@@ -3,70 +3,1058 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ficha de Personagem D&D 5e - nome</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        rpg: {
-                            bg: '#12131a',
-                            panel: '#1a1c24',
-                            border: '#3b2f23',
-                            accent: '#d49b43',
-                            accentHover: '#e6ad54',
-                            text: '#e2e8f0',
-                            muted: '#94a3b8',
-                            success: '#10b981',
-                            danger: '#ef4444'
-                        }
-                    },
-                    fontFamily: {
-                        serif: ['Georgia', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    <title>Ficha de Personagem D&D 5e - Pequeno fumaça em pó</title>
     <style>
-        /* Custom scrollbar */
+        /* --- ESTILOS GERAIS E VARIÁVEIS (CSS PURO) --- */
+        :root {
+            --color-bg: #12131a;
+            --color-panel: #1a1c24;
+            --color-border: #3b2f23;
+            --color-accent: #d49b43;
+            --color-accent-hover: #e6ad54;
+            --color-text: #e2e8f0;
+            --color-muted: #94a3b8;
+            --color-success: #10b981;
+            --color-success-bg: rgba(16, 185, 129, 0.15);
+            --color-success-border: rgba(16, 185, 129, 0.3);
+            --color-danger: #ef4444;
+            --color-danger-bg: rgba(239, 68, 68, 0.15);
+            --color-danger-border: rgba(239, 68, 68, 0.3);
+            --color-cyan: #22d3ee;
+            --font-serif: 'Georgia', serif;
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --transition: all 0.25s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            padding-bottom: 3rem;
+        }
+
+        /* Scrollbar customizada */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #12131a;
+            background: var(--color-bg);
         }
         ::-webkit-scrollbar-thumb {
-            background: #3b2f23;
+            background: var(--color-border);
             border-radius: 3px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #d49b43;
+            background: var(--color-accent);
         }
-        
-        /* Pulse Animation for rolling dice */
+
+        /* --- LAYOUT CORES E PAINÉIS --- */
+        .header {
+            background-color: var(--color-panel);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .header-container {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .brand {
+                width: auto;
+            }
+        }
+
+        .brand-icon {
+            background-color: var(--color-border);
+            border: 1px solid var(--color-accent);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon svg {
+            width: 2rem;
+            height: 2rem;
+            color: var(--color-accent);
+        }
+
+        .brand-text h1 {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: bold;
+        }
+
+        .brand-text p {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        @media (min-width: 768px) {
+            .actions {
+                width: auto;
+                justify-content: flex-end;
+            }
+        }
+
+        .btn {
+            background-color: var(--color-panel);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        .btn-accent {
+            background-color: var(--color-accent);
+            color: var(--color-bg);
+            border: 1px solid var(--color-accent);
+        }
+
+        .btn-accent:hover {
+            background-color: var(--color-accent-hover);
+            color: var(--color-bg);
+            border-color: var(--color-accent-hover);
+        }
+
+        .btn-danger-mute {
+            background-color: var(--color-danger-bg);
+            border: 1px solid var(--color-danger-border);
+            color: #fca5a5;
+        }
+
+        .btn-danger-mute:hover {
+            background-color: var(--color-danger);
+            color: #ffffff;
+            border-color: var(--color-danger);
+        }
+
+        /* --- CONTAINER PRINCIPAL --- */
+        .main-container {
+            max-width: 1280px;
+            margin: 1.5rem auto 0 auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .main-container {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+            }
+            .col-left {
+                grid-column: span 8;
+            }
+            .col-right {
+                grid-column: span 4;
+            }
+        }
+
+        .space-y {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Painel Base (Card) */
+        .card {
+            background-color: var(--color-panel);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+        }
+
+        .card-title {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+        }
+
+        /* --- COMPONENTES E CAMPOS DE ENTRADA --- */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-muted);
+        }
+
+        .input-text {
+            width: 100%;
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            padding: 0.4rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 0.25rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .input-text:focus {
+            border-color: var(--color-accent);
+        }
+
+        .input-large {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            font-weight: bold;
+        }
+
+        .textarea-rpg {
+            width: 100%;
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            border-radius: 0.25rem;
+            padding: 0.75rem;
+            font-size: 0.75rem;
+            outline: none;
+            resize: none;
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        .textarea-rpg:focus {
+            border-color: var(--color-accent);
+        }
+
+        /* --- GRIDS DE LAYOUT --- */
+        .grid-header-fields {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-header-fields {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .grid-subfields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .grid-combat {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .grid-combat {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .grid-hp-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-hp-container {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+            }
+            .hp-box-left {
+                grid-column: span 8;
+            }
+            .hp-box-right {
+                grid-column: span 4;
+            }
+        }
+
+        .grid-hp-fields {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .hp-field-card {
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .hp-field-card input {
+            width: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--color-text);
+        }
+
+        .hp-field-card #hp-temp {
+            color: var(--color-cyan);
+        }
+
+        .hp-field-card #hp-max {
+            color: var(--color-muted);
+        }
+
+        /* --- ESTRUTURA DE COMBATE & DEFESA --- */
+        .combat-card {
+            background-color: var(--color-panel);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .combat-card:hover {
+            border-color: var(--color-accent);
+        }
+
+        .combat-card-clickable {
+            cursor: pointer;
+        }
+
+        .shield-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0.5rem 0;
+            width: 4rem;
+            height: 4rem;
+        }
+
+        .shield-container svg {
+            width: 100%;
+            height: 100%;
+            color: var(--color-border);
+            transition: var(--transition);
+        }
+
+        .combat-card:hover .shield-container svg {
+            color: rgba(212, 155, 67, 0.1);
+        }
+
+        .shield-input {
+            position: absolute;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            background: transparent;
+            border: none;
+            width: 3rem;
+            height: 3rem;
+            outline: none;
+            color: var(--color-text);
+        }
+
+        .shield-input:focus {
+            color: var(--color-accent);
+        }
+
+        .big-stat {
+            font-size: 1.875rem;
+            font-weight: 900;
+            color: var(--color-accent);
+            transition: var(--transition);
+        }
+
+        .combat-card:hover .big-stat {
+            transform: scale(1.1);
+        }
+
+        .sub-desc {
+            font-size: 0.625rem;
+            color: var(--color-muted);
+        }
+
+        .action-link {
+            font-size: 0.625rem;
+            color: var(--color-accent);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            margin-top: 0.25rem;
+        }
+
+        .combat-card:hover .action-link {
+            text-decoration: underline;
+        }
+
+        /* --- BARRA DE VIDA --- */
+        .progress-container {
+            width: 100%;
+            background-color: var(--color-bg);
+            height: 0.75rem;
+            border-radius: 9999px;
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--color-danger), var(--color-success));
+            transition: width 0.3s ease;
+        }
+
+        /* --- TESTES CONTRA A MORTE --- */
+        .death-saves-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .death-saves-row span {
+            font-weight: bold;
+        }
+
+        .death-saves-row.success span { color: var(--color-success); }
+        .death-saves-row.fail span { color: var(--color-danger); }
+
+        .checkbox-group {
+            display: flex;
+            gap: 0.375rem;
+        }
+
+        .checkbox-rpg {
+            width: 1rem;
+            height: 1rem;
+            accent-color: var(--color-accent);
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 0.25rem;
+            cursor: pointer;
+        }
+
+        .accent-success { accent-color: var(--color-success); }
+        .accent-danger { accent-color: var(--color-danger); }
+
+        /* --- ATRIBUTOS (STR, DEX, CON, ETC.) --- */
+        .grid-attributes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .grid-attributes {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        .attribute-card {
+            background-color: var(--color-panel);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .attribute-label {
+            font-size: 0.625rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+            color: var(--color-muted);
+            text-align: center;
+        }
+
+        .attribute-roll-btn {
+            margin: 0.375rem 0;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .attribute-card:hover .attribute-roll-btn {
+            border-color: var(--color-accent);
+        }
+
+        .attribute-mod {
+            font-size: 1.125rem;
+            font-weight: 900;
+            color: var(--color-accent);
+        }
+
+        .attribute-input-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .attribute-input {
+            width: 2.5rem;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.875rem;
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed var(--color-border);
+            color: var(--color-text);
+            outline: none;
+            padding-bottom: 1px;
+        }
+
+        .attribute-input:focus {
+            border-bottom-color: var(--color-accent);
+        }
+
+        /* Remove arrows from number input */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* --- ARMAS E ATAQUES --- */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .weapons-table {
+            width: 100%;
+            text-align: left;
+            font-size: 0.875rem;
+            border-collapse: collapse;
+        }
+
+        .weapons-table th {
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            padding-bottom: 0.5rem;
+        }
+
+        .weapons-table td {
+            padding: 0.625rem 0;
+            border-bottom: 1px solid rgba(59, 47, 35, 0.5);
+        }
+
+        .weapons-table tbody tr:hover {
+            background-color: rgba(26, 28, 36, 0.3);
+        }
+
+        .weapon-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-delete-weapon {
+            background: transparent;
+            border: none;
+            color: var(--color-danger);
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 0 0.25rem;
+        }
+
+        .weapon-input-inline {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid transparent;
+            color: var(--color-text);
+            font-size: 0.75rem;
+            outline: none;
+            width: 100%;
+            padding-bottom: 2px;
+        }
+
+        .weapon-input-inline:hover {
+            border-bottom-color: var(--color-border);
+        }
+
+        .weapon-input-inline:focus {
+            border-bottom-color: var(--color-accent);
+        }
+
+        .weapon-actions-cell {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.375rem;
+        }
+
+        .btn-roll-weapon {
+            padding: 0.25rem 0.5rem;
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+            font-size: 0.625rem;
+            font-weight: bold;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-roll-weapon:hover {
+            background-color: var(--color-accent);
+            color: var(--color-bg);
+            border-color: var(--color-accent);
+        }
+
+        .btn-roll-damage:hover {
+            background-color: var(--color-success);
+            color: #ffffff;
+            border-color: var(--color-success);
+        }
+
+        /* --- EQUIPAMENTOS & MOEDAS --- */
+        .grid-split {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-split {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .grid-coins {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.375rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .coin-box {
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            padding: 0.375rem;
+            border-radius: 0.25rem;
+            text-align: center;
+        }
+
+        .coin-label {
+            font-size: 0.56rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .coin-label.pc { color: var(--color-muted); }
+        .coin-label.pp { color: #d97706; }
+        .coin-label.pe { color: #a1a1aa; }
+        .coin-label.po { color: #fbbf24; }
+        .coin-label.pl { color: #5eead4; }
+
+        .coin-input {
+            width: 100%;
+            text-align: center;
+            font-size: 0.75rem;
+            background: transparent;
+            border: none;
+            color: var(--color-text);
+            outline: none;
+            margin-top: 0.125rem;
+        }
+
+        /* --- DADOS E HISTÓRICO (ROLLER LOG) --- */
+        .border-highlight {
+            border: 2px solid var(--color-accent) !important;
+            box-shadow: 0 10px 25px -5px rgba(212, 155, 67, 0.15);
+        }
+
+        .roller-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .roller-clean-btn {
+            font-size: 0.625rem;
+            text-transform: uppercase;
+            background: transparent;
+            border: none;
+            color: var(--color-muted);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .roller-clean-btn:hover {
+            color: var(--color-accent);
+        }
+
+        .big-dice-display {
+            background-color: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 140px;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .dice-graphic-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        .dice-graphic {
+            width: 4rem;
+            height: 4rem;
+            color: var(--color-accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 auto 0.25rem auto;
+        }
+
+        .dice-graphic svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .dice-result-number {
+            font-size: 1.5rem;
+            font-weight: 900;
+            position: relative;
+            z-index: 10;
+            padding-top: 0.25rem;
+            color: var(--color-accent);
+        }
+
+        .dice-label-text {
+            font-size: 0.625rem;
+            color: var(--color-muted);
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .dice-total-sum {
+            font-size: 1.875rem;
+            font-weight: 900;
+            margin-top: 0.5rem;
+            color: #34d399; /* Emerald 400 */
+        }
+
+        .dice-formula-desc {
+            font-size: 0.75rem;
+            color: var(--color-muted);
+            font-style: italic;
+            margin-top: 0.125rem;
+        }
+
+        .history-list {
+            max-height: 10rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+            padding-right: 0.25rem;
+        }
+
+        .history-empty {
+            color: var(--color-muted);
+            font-style: italic;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 0.75rem;
+        }
+
+        .log-entry {
+            background-color: var(--color-bg);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            font-size: 0.75rem;
+        }
+
+        .log-entry-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.625rem;
+        }
+
+        .log-entry-title {
+            font-weight: bold;
+            color: var(--color-accent);
+            text-transform: uppercase;
+        }
+
+        .log-entry-time {
+            color: var(--color-muted);
+        }
+
+        .log-entry-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 0.25rem;
+        }
+
+        .log-entry-formula {
+            font-size: 0.625rem;
+            color: var(--color-muted);
+            font-style: italic;
+        }
+
+        .log-entry-total {
+            font-size: 0.875rem;
+            font-weight: 900;
+            color: #34d399;
+        }
+
+        /* --- TESTES DE RESISTÊNCIA E LISTA DE PERÍCIAS --- */
+        .saves-box-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .save-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--color-bg);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            border: 1px solid rgba(59, 47, 35, 0.4);
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .save-item:hover {
+            border-color: rgba(212, 155, 67, 0.4);
+        }
+
+        .save-item-left {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .save-item-left button {
+            background: transparent;
+            border: none;
+            color: var(--color-text);
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .save-item-left button:hover {
+            color: var(--color-accent);
+        }
+
+        .save-item-value {
+            font-family: var(--font-serif);
+            font-weight: bold;
+            color: var(--color-accent);
+        }
+
+        .skills-list-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 24rem;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        /* --- TOAST FLUTUANTE (MOBILE FRIENDLY) --- */
+        .toast {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background-color: var(--color-panel);
+            border: 2px solid var(--color-accent);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            transform: translateY(150px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 24rem;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast-dice-graphic {
+            background-color: var(--color-accent);
+            color: var(--color-bg);
+            font-weight: 900;
+            border-radius: 9999px;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .toast-text h4 {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-muted);
+        }
+
+        .toast-text .total-text {
+            font-size: 0.875rem;
+            font-weight: 900;
+            color: #34d399;
+        }
+
+        .toast-text .formula-text {
+            font-size: 0.625rem;
+            color: var(--color-muted);
+            font-style: italic;
+        }
+
+        /* --- ANIMAÇÕES --- */
         @keyframes dice-spin {
             0% { transform: rotate(0deg) scale(0.8); opacity: 0.5; }
             50% { transform: rotate(180deg) scale(1.2); opacity: 1; }
             100% { transform: rotate(360deg) scale(1); opacity: 1; }
         }
+
         .rolling-dice {
             animation: dice-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+
+        /* Utilitários Extras */
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-rpg-bg text-rpg-text font-sans min-h-screen pb-12">
+<body>
 
     <!-- HEADER / TOPO -->
-    <header class="border-b border-rpg-border bg-rpg-panel py-4 px-6 sticky top-0 z-40 shadow-lg">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4 w-full md:w-auto">
-                <div class="bg-rpg-border p-2 rounded-lg border border-rpg-accent">
-                    <!-- D20 Icon -->
-                    <svg class="w-8 h-8 text-rpg-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <header class="header">
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polygon points="12 2 2 7 2 17 12 22 22 17 22 7 12 2" />
                         <polyline points="2 7 12 12 22 7" />
                         <line x1="12" y1="12" x2="12" y2="22" />
@@ -75,354 +1063,334 @@
                         <polyline points="2 17 12 12 22 17" />
                     </svg>
                 </div>
-                <div>
-                    <h1 class="text-xl font-bold font-serif text-rpg-accent tracking-wide uppercase">D&D 5e - Ficha de Personagem</h1>
-                    <p class="text-xs text-rpg-muted">Gerenciador de Ficha Offline e Rolador Integrado</p>
+                <div class="brand-text">
+                    <h1>D&D 5e - Ficha de Personagem</h1>
+                    <p>Gerenciador de Ficha Offline e Rolador Integrado (Pure CSS)</p>
                 </div>
             </div>
             
-            <!-- AÇÕES RÁPIDAS -->
-            <div class="flex flex-wrap gap-2 w-full md:w-auto justify-end">
-                <button onclick="exportSheet()" class="px-3 py-1.5 bg-rpg-panel border border-rpg-border hover:border-rpg-accent text-xs rounded transition flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <div class="actions">
+                <button onclick="exportSheet()" class="btn">
+                    <svg class="w-3.5 h-3.5" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     Exportar
                 </button>
-                <button onclick="document.getElementById('importFile').click()" class="px-3 py-1.5 bg-rpg-panel border border-rpg-border hover:border-rpg-accent text-xs rounded transition flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <button onclick="document.getElementById('importFile').click()" class="btn">
+                    <svg class="w-3.5 h-3.5" style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     Importar
                 </button>
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="importSheet(event)">
-                <button onclick="resetToDefault()" class="px-3 py-1.5 bg-rpg-danger/20 border border-rpg-danger/40 hover:bg-rpg-danger/40 text-xs text-red-200 rounded transition">
+                <button onclick="resetToDefault()" class="btn btn-danger-mute">
                     Reiniciar Ficha
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <main class="main-container">
         
-        <!-- COLUNA ESQUERDA (DADOS GERAIS, STATUS & ATRIBUTOS) -->
-        <div class="lg:col-span-8 space-y-6">
+        <!-- COLUNA ESQUERDA -->
+        <div class="col-left space-y">
             
-            <!-- BLOCO 1: CABEÇALHO DO PERSONAGEM (CAMPOS EDITÁVEIS) -->
-            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 shadow-md grid grid-cols-1 md:grid-cols-3 gap-6 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-rpg-accent/5 rounded-full blur-2xl pointer-events-none"></div>
-                
-                <!-- Nome e Classe -->
-                <div class="md:col-span-2 space-y-4">
-                    <div>
-                        <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Nome do Personagem</label>
-                        <input type="text" id="char-name" onchange="updateData('name', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent text-rpg-accent font-serif text-2xl font-bold px-3 py-1.5 rounded outline-none transition">
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Classe e Nível</label>
-                            <div class="flex gap-1">
-                                <input type="text" id="char-class" onchange="updateData('class', this.value)" class="w-3/4 bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
-                                <input type="number" id="char-level" onchange="updateLevel(this.value)" min="1" max="20" class="w-1/4 bg-rpg-bg border border-rpg-border focus:border-rpg-accent text-center font-bold px-1 py-1.5 rounded outline-none text-sm transition">
+            <!-- BLOCO 1: CABEÇALHO DO PERSONAGEM -->
+            <section class="card">
+                <div class="grid-header-fields">
+                    <div class="space-y" style="gap:1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Nome do Personagem</label>
+                            <input type="text" id="char-name" onchange="updateData('name', this.value)" class="input-text input-large">
+                        </div>
+                        <div class="grid-subfields">
+                            <div class="form-group">
+                                <label class="form-label">Classe e Nível</label>
+                                <div style="display:flex; gap:0.25rem;">
+                                    <input type="text" id="char-class" onchange="updateData('class', this.value)" class="input-text" style="width: 75%;">
+                                    <input type="number" id="char-level" onchange="updateLevel(this.value)" min="1" max="20" class="input-text" style="width: 25%; text-align: center; font-weight: bold;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Raça</label>
+                                <input type="text" id="char-race" onchange="updateData('race', this.value)" class="input-text">
                             </div>
                         </div>
-                        <div>
-                            <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Raça</label>
-                            <input type="text" id="char-race" onchange="updateData('race', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
-                        </div>
                     </div>
-                </div>
 
-                <!-- Detalhes do Jogador -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="col-span-2">
-                        <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Jogador</label>
-                        <input type="text" id="char-player" onchange="updateData('player', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
-                    </div>
-                    <div>
-                        <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Antecedente</label>
-                        <input type="text" id="char-background" onchange="updateData('background', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
-                    </div>
-                    <div>
-                        <label class="text-xs uppercase tracking-wider text-rpg-muted block mb-1">Tendência</label>
-                        <input type="text" id="char-alignment" onchange="updateData('alignment', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent px-3 py-1.5 rounded outline-none text-sm transition">
+                    <div class="grid-subfields" style="grid-template-columns: 1fr;">
+                        <div class="form-group">
+                            <label class="form-label">Jogador</label>
+                            <input type="text" id="char-player" onchange="updateData('player', this.value)" class="input-text">
+                        </div>
+                        <div class="grid-subfields">
+                            <div class="form-group">
+                                <label class="form-label">Antecedente</label>
+                                <input type="text" id="char-background" onchange="updateData('background', this.value)" class="input-text">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tendência</label>
+                                <input type="text" id="char-alignment" onchange="updateData('alignment', this.value)" class="input-text">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- BLOCO 2: COMBAT & STATUS (HP, CA, INICIATIVA, VELOCIDADE) -->
-            <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <!-- CLASSE DE ARMADURA -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-4 text-center flex flex-col justify-between items-center relative group hover:border-rpg-accent transition">
-                    <span class="text-xs uppercase tracking-wider text-rpg-muted">Classe de Armadura (CA)</span>
-                    <div class="my-2 relative flex items-center justify-center">
-                        <!-- Shield SVG background -->
-                        <svg class="w-16 h-16 text-rpg-border group-hover:text-rpg-accent/10 transition" fill="currentColor" viewBox="0 0 24 24">
+            <!-- BLOCO 2: COMBAT STATUS -->
+            <section class="grid-combat">
+                <!-- ARMADURA -->
+                <div class="combat-card">
+                    <span class="form-label">Classe de Armadura</span>
+                    <div class="shield-container">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                         </svg>
-                        <input type="number" id="combat-ac" onchange="updateData('ac', this.value)" class="absolute text-center text-xl font-bold bg-transparent border-none w-12 h-12 focus:outline-none focus:text-rpg-accent">
+                        <input type="number" id="combat-ac" onchange="updateData('ac', this.value)" class="shield-input">
                     </div>
-                    <span class="text-[10px] text-rpg-muted">Toque para alterar</span>
+                    <span class="sub-desc">Toque para alterar</span>
                 </div>
 
                 <!-- INICIATIVA -->
-                <div onclick="rollInitiative()" class="bg-rpg-panel border border-rpg-border rounded-xl p-4 text-center flex flex-col justify-between items-center cursor-pointer group hover:border-rpg-accent transition">
-                    <span class="text-xs uppercase tracking-wider text-rpg-muted">Iniciativa</span>
-                    <div class="my-2 flex flex-col items-center">
-                        <span id="combat-init" class="text-3xl font-black text-rpg-accent group-hover:scale-110 transition duration-200">+1</span>
-                        <span class="text-xs text-rpg-muted mt-1">(Baseado em DES)</span>
+                <div onclick="rollInitiative()" class="combat-card combat-card-clickable">
+                    <span class="form-label">Iniciativa</span>
+                    <div style="margin: 0.5rem 0; display:flex; flex-direction:column; align-items:center;">
+                        <span id="combat-init" class="big-stat">+1</span>
+                        <span class="sub-desc">(DES)</span>
                     </div>
-                    <span class="text-[10px] text-rpg-accent uppercase font-bold tracking-wider group-hover:underline">Clique para Rolar</span>
+                    <span class="action-link">Clique para Rolar</span>
                 </div>
 
                 <!-- DESLOCAMENTO -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-4 text-center flex flex-col justify-between items-center">
-                    <span class="text-xs uppercase tracking-wider text-rpg-muted">Deslocamento</span>
-                    <div class="my-2 flex items-center justify-center gap-1">
-                        <input type="text" id="combat-speed" onchange="updateData('speed', this.value)" class="text-center text-2xl font-bold bg-transparent border-b border-dashed border-rpg-border w-16 focus:outline-none focus:border-rpg-accent">
-                        <span class="text-sm text-rpg-muted">m</span>
+                <div class="combat-card">
+                    <span class="form-label">Deslocamento</span>
+                    <div style="margin: 0.5rem 0; display:flex; align-items:center; gap:2px; justify-content:center;">
+                        <input type="text" id="combat-speed" onchange="updateData('speed', this.value)" class="attribute-input" style="font-size: 1.5rem; width: 4rem;">
+                        <span class="form-label" style="text-transform:none; font-size: 0.875rem;">m</span>
                     </div>
-                    <span class="text-[10px] text-rpg-muted">Ex: 9m (6 quadrados)</span>
+                    <span class="sub-desc">Ex: 9m (6q)</span>
                 </div>
 
-                <!-- BÔNUS DE PROFICIÊNCIA -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-4 text-center flex flex-col justify-between items-center">
-                    <span class="text-xs uppercase tracking-wider text-rpg-muted">Bônus de Proficiência</span>
-                    <div class="my-2">
-                        <span id="prof-bonus" class="text-3xl font-black text-rpg-accent">+2</span>
+                <!-- BÔNUS PROFICIÊNCIA -->
+                <div class="combat-card">
+                    <span class="form-label">Bônus de Proficiência</span>
+                    <div style="margin: 0.5rem 0;">
+                        <span id="prof-bonus" class="big-stat" style="color: var(--color-accent);">+2</span>
                     </div>
-                    <span class="text-[10px] text-rpg-muted">Automático por Nível</span>
+                    <span class="sub-desc">Calculado pelo Nível</span>
                 </div>
             </section>
 
-            <!-- BLOCO 3: VIDA (HP), DADOS DE VIDA & SALVAMENTO CONTRA A MORTE -->
-            <section class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                <!-- PONTOS DE VIDA -->
-                <div class="md:col-span-8 bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
-                    <div class="flex justify-between items-center border-b border-rpg-border pb-2">
-                        <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider flex items-center gap-2">
-                            <span class="w-2.5 h-2.5 rounded-full bg-rpg-danger"></span> Pontos de Vida (PV)
+            <!-- BLOCO 3: VIDA (HP) -->
+            <section class="grid-hp-container card">
+                <div class="hp-box-left">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--color-border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                        <h3 class="card-title" style="border:none; margin:0; padding:0;">
+                            <span style="width: 10px; height: 10px; border-radius: 50%; background-color: var(--color-danger); display: inline-block;"></span> Pontos de Vida (PV)
                         </h3>
-                        <div class="flex items-center gap-2">
-                            <button onclick="modifyHP(-5)" class="px-2 py-1 bg-rpg-danger/20 hover:bg-rpg-danger/40 border border-rpg-danger/30 text-xs rounded transition">-5</button>
-                            <button onclick="modifyHP(-1)" class="px-2 py-1 bg-rpg-danger/20 hover:bg-rpg-danger/40 border border-rpg-danger/30 text-xs rounded transition">-1</button>
-                            <span class="text-xs text-rpg-muted font-bold mx-1">Modificadores</span>
-                            <button onclick="modifyHP(1)" class="px-2 py-1 bg-rpg-success/20 hover:bg-rpg-success/40 border border-rpg-success/30 text-xs rounded transition">+1</button>
-                            <button onclick="modifyHP(5)" class="px-2 py-1 bg-rpg-success/20 hover:bg-rpg-success/40 border border-rpg-success/30 text-xs rounded transition">+5</button>
+                        <div style="display:flex; align-items:center; gap: 0.5rem;">
+                            <button onclick="modifyHP(-5)" class="btn btn-danger-mute" style="padding: 0.2rem 0.4rem;">-5</button>
+                            <button onclick="modifyHP(-1)" class="btn btn-danger-mute" style="padding: 0.2rem 0.4rem;">-1</button>
+                            <span class="form-label" style="font-weight:bold;">Ajustes</span>
+                            <button onclick="modifyHP(1)" class="btn" style="background-color: var(--color-success-bg); border-color: var(--color-success-border); color: #a7f3d0; padding: 0.2rem 0.4rem;">+1</button>
+                            <button onclick="modifyHP(5)" class="btn" style="background-color: var(--color-success-bg); border-color: var(--color-success-border); color: #a7f3d0; padding: 0.2rem 0.4rem;">+5</button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="bg-rpg-bg border border-rpg-border p-3 rounded-lg text-center">
-                            <label class="text-[10px] text-rpg-muted uppercase block mb-1">Atuais</label>
-                            <input type="number" id="hp-current" onchange="updateHP()" class="w-full text-center text-2xl font-bold bg-transparent focus:outline-none text-rpg-text">
+                    <div class="grid-hp-fields">
+                        <div class="hp-field-card">
+                            <label class="form-label" style="font-size:0.625rem; display:block; margin-bottom:0.25rem;">Atuais</label>
+                            <input type="number" id="hp-current" onchange="updateHP()">
                         </div>
-                        <div class="bg-rpg-bg border border-rpg-border p-3 rounded-lg text-center">
-                            <label class="text-[10px] text-rpg-muted uppercase block mb-1">Máximos</label>
-                            <input type="number" id="hp-max" onchange="updateHP()" class="w-full text-center text-2xl font-bold bg-transparent focus:outline-none text-rpg-muted">
+                        <div class="hp-field-card">
+                            <label class="form-label" style="font-size:0.625rem; display:block; margin-bottom:0.25rem;">Máximos</label>
+                            <input type="number" id="hp-max" onchange="updateHP()">
                         </div>
-                        <div class="bg-rpg-bg border border-rpg-border p-3 rounded-lg text-center">
-                            <label class="text-[10px] text-rpg-muted uppercase block mb-1">Temporários</label>
-                            <input type="number" id="hp-temp" onchange="updateHP()" class="w-full text-center text-2xl font-bold bg-transparent focus:outline-none text-cyan-400" placeholder="0">
+                        <div class="hp-field-card">
+                            <label class="form-label" style="font-size:0.625rem; display:block; margin-bottom:0.25rem;">Temporários</label>
+                            <input type="number" id="hp-temp" onchange="updateHP()" placeholder="0">
                         </div>
                     </div>
-                    <!-- Barra de Vida Visual -->
-                    <div class="w-full bg-rpg-bg h-3 rounded-full overflow-hidden border border-rpg-border">
-                        <div id="hp-bar" class="bg-gradient-to-r from-red-600 to-emerald-500 h-full transition-all duration-300" style="width: 100%;"></div>
+                    <div class="progress-container">
+                        <div id="hp-bar" class="progress-bar" style="width: 100%;"></div>
                     </div>
                 </div>
 
-                <!-- DADOS DE VIDA E SALVAMENTO DA MORTE -->
-                <div class="md:col-span-4 bg-rpg-panel border border-rpg-border rounded-xl p-6 flex flex-col justify-between gap-4">
-                    <!-- Dados de Vida -->
+                <div class="hp-box-right" style="display:flex; flex-direction:column; justify-content:space-between; gap:1rem;">
                     <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs uppercase tracking-wider text-rpg-muted">Dados de Vida</span>
-                            <button onclick="rollHitDice()" class="text-xs text-rpg-accent hover:underline">Rolar d12</button>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+                            <span class="form-label">Dados de Vida</span>
+                            <button onclick="rollHitDice()" class="action-link" style="background:transparent; border:none; cursor:pointer;">Rolar d12</button>
                         </div>
-                        <div class="flex items-center gap-2 bg-rpg-bg border border-rpg-border p-2 rounded-lg">
-                            <input type="text" id="combat-hitdice-current" onchange="updateData('hitDiceCurrent', this.value)" class="w-1/2 text-center text-sm font-bold bg-transparent focus:outline-none text-rpg-text" placeholder="Atuais">
-                            <span class="text-rpg-muted">/</span>
-                            <input type="text" id="combat-hitdice-total" onchange="updateData('hitDiceTotal', this.value)" class="w-1/2 text-center text-sm font-bold bg-transparent focus:outline-none text-rpg-muted" placeholder="Total">
+                        <div style="display:flex; align-items:center; gap:0.5rem; background-color: var(--color-bg); border:1px solid var(--color-border); padding:0.5rem; border-radius:0.5rem;">
+                            <input type="text" id="combat-hitdice-current" onchange="updateData('hitDiceCurrent', this.value)" class="weapon-input-inline" style="text-align:center; font-weight:bold;" placeholder="Atuais">
+                            <span style="color: var(--color-muted)">/</span>
+                            <input type="text" id="combat-hitdice-total" onchange="updateData('hitDiceTotal', this.value)" class="weapon-input-inline" style="text-align:center; color: var(--color-muted);" placeholder="Total">
                         </div>
                     </div>
 
-                    <!-- Testes contra a Morte -->
                     <div>
-                        <span class="text-xs uppercase tracking-wider text-rpg-muted block mb-2">Resistência à Morte</span>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="text-emerald-500 font-bold">Sucessos:</span>
-                                <div class="flex gap-1.5">
-                                    <input type="checkbox" id="death-success-1" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-emerald-500">
-                                    <input type="checkbox" id="death-success-2" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-emerald-500">
-                                    <input type="checkbox" id="death-success-3" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-emerald-500">
-                                </div>
+                        <span class="form-label" style="display:block; margin-bottom:0.5rem;">Resistência à Morte</span>
+                        <div class="death-saves-row success">
+                            <span>Sucessos:</span>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="death-success-1" onchange="updateDeathSaves()" class="checkbox-rpg accent-success">
+                                <input type="checkbox" id="death-success-2" onchange="updateDeathSaves()" class="checkbox-rpg accent-success">
+                                <input type="checkbox" id="death-success-3" onchange="updateDeathSaves()" class="checkbox-rpg accent-success">
                             </div>
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="text-rose-500 font-bold">Falhas:</span>
-                                <div class="flex gap-1.5">
-                                    <input type="checkbox" id="death-fail-1" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rose-500">
-                                    <input type="checkbox" id="death-fail-2" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rose-500">
-                                    <input type="checkbox" id="death-fail-3" onchange="updateDeathSaves()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rose-500">
-                                </div>
+                        </div>
+                        <div class="death-saves-row fail">
+                            <span>Falhas:</span>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="death-fail-1" onchange="updateDeathSaves()" class="checkbox-rpg accent-danger">
+                                <input type="checkbox" id="death-fail-2" onchange="updateDeathSaves()" class="checkbox-rpg accent-danger">
+                                <input type="checkbox" id="death-fail-3" onchange="updateDeathSaves()" class="checkbox-rpg accent-danger">
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- BLOCO 4: ATRIBUTOS (FOR, DES, CON, INT, SAB, CAR) -->
-            <section class="grid grid-cols-3 sm:grid-cols-6 gap-4">
-                <!-- FORÇA -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">FORÇA</span>
-                    <button onclick="rollStat('Força', 'str')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
-                        <span id="mod-str" class="text-lg font-black text-rpg-accent">+4</span>
+            <!-- BLOCO 4: ATRIBUTOS -->
+            <section class="grid-attributes">
+                <!-- FOR -->
+                <div class="attribute-card">
+                    <span class="attribute-label">FORÇA</span>
+                    <button onclick="rollStat('Força', 'str')" class="attribute-roll-btn">
+                        <span id="mod-str" class="attribute-mod">+4</span>
                     </button>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <input type="number" id="val-str" onchange="calcModifier('str')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    <div class="attribute-input-wrapper">
+                        <input type="number" id="val-str" onchange="calcModifier('str')" class="attribute-input">
                     </div>
                 </div>
-                <!-- DESTREZA -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">DESTREZA</span>
-                    <button onclick="rollStat('Destreza', 'des')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
-                        <span id="mod-des" class="text-lg font-black text-rpg-accent">+1</span>
+                <!-- DES -->
+                <div class="attribute-card">
+                    <span class="attribute-label">DESTREZA</span>
+                    <button onclick="rollStat('Destreza', 'des')" class="attribute-roll-btn">
+                        <span id="mod-des" class="attribute-mod">+1</span>
                     </button>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <input type="number" id="val-des" onchange="calcModifier('des')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    <div class="attribute-input-wrapper">
+                        <input type="number" id="val-des" onchange="calcModifier('des')" class="attribute-input">
                     </div>
                 </div>
-                <!-- CONSTITUIÇÃO -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">CONSTITUIÇÃO</span>
-                    <button onclick="rollStat('Constituição', 'con')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
-                        <span id="mod-con" class="text-lg font-black text-rpg-accent">+3</span>
+                <!-- CON -->
+                <div class="attribute-card">
+                    <span class="attribute-label">CONSTITUIÇÃO</span>
+                    <button onclick="rollStat('Constituição', 'con')" class="attribute-roll-btn">
+                        <span id="mod-con" class="attribute-mod">+3</span>
                     </button>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <input type="number" id="val-con" onchange="calcModifier('con')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    <div class="attribute-input-wrapper">
+                        <input type="number" id="val-con" onchange="calcModifier('con')" class="attribute-input">
                     </div>
                 </div>
-                <!-- INTELIGÊNCIA -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">INTELIGÊNCIA</span>
-                    <button onclick="rollStat('Inteligência', 'int')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
-                        <span id="mod-int" class="text-lg font-black text-rpg-accent">-1</span>
+                <!-- INT -->
+                <div class="attribute-card">
+                    <span class="attribute-label">INTELIGÊNCIA</span>
+                    <button onclick="rollStat('Inteligência', 'int')" class="attribute-roll-btn">
+                        <span id="mod-int" class="attribute-mod">-1</span>
                     </button>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <input type="number" id="val-int" onchange="calcModifier('int')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    <div class="attribute-input-wrapper">
+                        <input type="number" id="val-int" onchange="calcModifier('int')" class="attribute-input">
                     </div>
                 </div>
-                <!-- SABEDORIA -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">SABEDORIA</span>
-                    <button onclick="rollStat('Sabedoria', 'sab')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
-                        <span id="mod-sab" class="text-lg font-black text-rpg-accent">+0</span>
+                <!-- SAB -->
+                <div class="attribute-card">
+                    <span class="attribute-label">SABEDORIA</span>
+                    <button onclick="rollStat('Sabedoria', 'sab')" class="attribute-roll-btn">
+                        <span id="mod-sab" class="attribute-mod">+0</span>
                     </button>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <input type="number" id="val-sab" onchange="calcModifier('sab')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    <div class="attribute-input-wrapper">
+                        <input type="number" id="val-sab" onchange="calcModifier('sab')" class="attribute-input">
                     </div>
                 </div>
-                <!-- CARISMA -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-3 flex flex-col justify-between items-center relative group">
-                    <span class="text-[10px] uppercase font-bold tracking-wider text-rpg-muted text-center">CARISMA</span>
-                    <button onclick="rollStat('Carisma', 'car')" class="my-1.5 w-12 h-12 rounded-full bg-rpg-bg border border-rpg-border group-hover:border-rpg-accent flex flex-col items-center justify-center transition duration-200">
-                        <span id="mod-car" class="text-lg font-black text-rpg-accent">-1</span>
+                <!-- CAR -->
+                <div class="attribute-card">
+                    <span class="attribute-label">CARISMA</span>
+                    <button onclick="rollStat('Carisma', 'car')" class="attribute-roll-btn">
+                        <span id="mod-car" class="attribute-mod">-1</span>
                     </button>
-                    <div class="flex items-center justify-center gap-1 mt-1">
-                        <input type="number" id="val-car" onchange="calcModifier('car')" class="w-10 text-center font-bold text-sm bg-transparent border-b border-dashed border-rpg-border focus:outline-none focus:border-rpg-accent">
+                    <div class="attribute-input-wrapper">
+                        <input type="number" id="val-car" onchange="calcModifier('car')" class="attribute-input">
                     </div>
                 </div>
             </section>
 
-            <!-- BLOCO 5: COMBATE / ARMAS & ATAQUES -->
-            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
-                <div class="flex justify-between items-center border-b border-rpg-border pb-2">
-                    <h3 class="font-serif text-lg text-rpg-accent uppercase tracking-wider flex items-center gap-2">
-                        <svg class="w-5 h-5 text-rpg-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <!-- BLOCO 5: COMBATE / ARMAS -->
+            <section class="card">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--color-border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                    <h3 class="card-title" style="border:none; margin:0; padding:0;">
                         Ataques & Conjurações (Armas)
                     </h3>
-                    <button onclick="addWeapon()" class="px-3 py-1 bg-rpg-accent text-rpg-bg text-xs font-bold rounded hover:bg-rpg-accentHover transition">+ Nova Arma</button>
+                    <button onclick="addWeapon()" class="btn btn-accent">+ Nova Arma</button>
                 </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm border-collapse">
+                <div class="table-responsive">
+                    <table class="weapons-table">
                         <thead>
-                            <tr class="border-b border-rpg-border text-rpg-muted text-xs uppercase">
-                                <th class="pb-2 font-bold">Arma / Nome</th>
-                                <th class="pb-2 font-bold text-center">Bônus Atq</th>
-                                <th class="pb-2 font-bold text-center">Dano / Tipo</th>
-                                <th class="pb-2 font-bold text-right">Rolar</th>
+                            <tr>
+                                <th>Arma / Nome</th>
+                                <th style="text-align:center;">Bônus Atq</th>
+                                <th style="text-align:center;">Dano / Tipo</th>
+                                <th style="text-align:right;">Rolar</th>
                             </tr>
                         </thead>
                         <tbody id="weapons-list">
-                            <!-- Inserido dinamicamente por JS -->
+                            <!-- Inserido por JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- BLOCO 6: EQUIPAMENTOS, RIQUEZAS E PROFICIÊNCIAS EXTRA -->
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Inventário e Ouro -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4 flex flex-col justify-between">
+            <!-- BLOCO 6: MOCHILA E PROFICIÊNCIAS -->
+            <section class="grid-split">
+                <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
                     <div>
-                        <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider mb-2 flex items-center gap-2 border-b border-rpg-border pb-2">
-                            Mochila & Inventário
-                        </h3>
-                        <!-- Moedas -->
-                        <div class="grid grid-cols-5 gap-1.5 mb-3">
-                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
-                                <label class="text-[9px] text-rpg-muted font-bold block">PC</label>
-                                <input type="number" id="coin-pc" onchange="updateCoin('pc', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                        <h3 class="card-title">Mochila & Inventário</h3>
+                        <div class="grid-coins">
+                            <div class="coin-box">
+                                <span class="coin-label pc">PC</span>
+                                <input type="number" id="coin-pc" onchange="updateCoin('pc', this.value)" class="coin-input">
                             </div>
-                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
-                                <label class="text-[9px] text-amber-600 font-bold block">PP</label>
-                                <input type="number" id="coin-pp" onchange="updateCoin('pp', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            <div class="coin-box">
+                                <span class="coin-label pp">PP</span>
+                                <input type="number" id="coin-pp" onchange="updateCoin('pp', this.value)" class="coin-input">
                             </div>
-                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
-                                <label class="text-[9px] text-zinc-400 font-bold block">PE</label>
-                                <input type="number" id="coin-pe" onchange="updateCoin('pe', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            <div class="coin-box">
+                                <span class="coin-label pe">PE</span>
+                                <input type="number" id="coin-pe" onchange="updateCoin('pe', this.value)" class="coin-input">
                             </div>
-                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
-                                <label class="text-[9px] text-yellow-500 font-bold block">PO</label>
-                                <input type="number" id="coin-po" onchange="updateCoin('po', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            <div class="coin-box">
+                                <span class="coin-label po">PO</span>
+                                <input type="number" id="coin-po" onchange="updateCoin('po', this.value)" class="coin-input">
                             </div>
-                            <div class="bg-rpg-bg border border-rpg-border p-1.5 rounded text-center">
-                                <label class="text-[9px] text-teal-300 font-bold block">PL</label>
-                                <input type="number" id="coin-pl" onchange="updateCoin('pl', this.value)" class="w-full text-center text-xs bg-transparent focus:outline-none">
+                            <div class="coin-box">
+                                <span class="coin-label pl">PL</span>
+                                <input type="number" id="coin-pl" onchange="updateCoin('pl', this.value)" class="coin-input">
                             </div>
                         </div>
-                        <textarea id="equipment-text" onchange="updateData('equipment', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent rounded p-3 text-xs outline-none h-40 resize-none leading-relaxed" placeholder="Escreva os itens da mochila, poções, armadura, itens mágicos..."></textarea>
+                        <textarea id="equipment-text" onchange="updateData('equipment', this.value)" class="textarea-rpg" style="height: 10rem;" placeholder="Escreva os itens da mochila, poções, armadura..."></textarea>
                     </div>
                 </div>
 
-                <!-- Outras Proficiências & Idiomas -->
-                <div class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
-                    <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider flex items-center gap-2 border-b border-rpg-border pb-2">
-                        Proficiências & Idiomas
-                    </h3>
-                    <textarea id="prof-langs-text" onchange="updateData('profAndLangs', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent rounded p-3 text-xs outline-none h-48 resize-none leading-relaxed" placeholder="Ex: Idioma Anão, Comum. Proficiência em Armaduras leves, médias, escudos e armas marciais..."></textarea>
+                <div class="card">
+                    <h3 class="card-title">Proficiências & Idiomas</h3>
+                    <textarea id="prof-langs-text" onchange="updateData('profAndLangs', this.value)" class="textarea-rpg" style="height: 12rem;" placeholder="Ex: Idioma Anão, Comum. Proficiência em Armaduras..."></textarea>
                 </div>
             </section>
 
         </div>
 
-        <!-- COLUNA DIREITA (TESTES DE RESISTÊNCIA, PERÍCIAS & ROLLER LOG) -->
-        <div class="lg:col-span-4 space-y-6">
+        <!-- COLUNA DIREITA -->
+        <div class="col-right space-y">
             
-            <!-- ROLLER LOG (DADO DE D20 INTERATIVO) -->
-            <section class="bg-rpg-panel border-2 border-rpg-accent rounded-xl p-6 shadow-xl relative overflow-hidden">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-serif text-base font-bold text-rpg-accent uppercase tracking-wider flex items-center gap-2">
-                        <span class="inline-block w-2.5 h-2.5 rounded-full bg-rpg-accent animate-pulse"></span>
+            <!-- ROLADOR DE DADOS -->
+            <section class="card border-highlight">
+                <div class="roller-header">
+                    <h3 class="card-title" style="border:none; margin:0; padding:0;">
+                        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background-color: var(--color-accent); margin-right: 4px;"></span>
                         Rolador de Dados
                     </h3>
-                    <button onclick="clearRollLog()" class="text-[10px] uppercase text-rpg-muted hover:text-rpg-accent">Limpar</button>
+                    <button onclick="clearRollLog()" class="roller-clean-btn">Limpar</button>
                 </div>
-                
-                <!-- Display do Dado Gigante -->
-                <div class="bg-rpg-bg border border-rpg-border rounded-xl p-6 text-center flex flex-col justify-center items-center relative min-h-[140px] mb-4">
-                    <div id="dice-container" class="relative z-10">
-                        <div id="dice-graphic" class="w-16 h-16 text-rpg-accent flex items-center justify-center relative mb-1 mx-auto">
-                            <!-- SVG d20 background -->
-                            <svg class="w-full h-full absolute top-0 left-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+
+                <div class="big-dice-display">
+                    <div class="dice-graphic-wrapper">
+                        <div id="dice-graphic" class="dice-graphic">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                 <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" />
                                 <polygon points="12 2 12 22" />
                                 <polygon points="2 8.5 22 8.5" />
@@ -432,129 +1400,122 @@
                                 <polygon points="12 22 2 8.5" />
                                 <polygon points="12 22 22 8.5" />
                             </svg>
-                            <span id="dice-result-val" class="text-2xl font-black relative z-10 pt-1 text-rpg-accent">-</span>
+                            <span id="dice-result-val" class="dice-result-number">-</span>
                         </div>
-                        <p id="dice-label" class="text-[10px] text-rpg-muted uppercase font-bold tracking-wider">-</p>
+                        <p id="dice-label" class="dice-label-text">-</p>
                     </div>
-                    <div id="dice-roll-total" class="text-3xl font-black mt-2 hidden text-emerald-400">Total: 18</div>
-                    <div id="dice-formula" class="text-xs text-rpg-muted italic mt-0.5 hidden">1d20 + 4 (Força)</div>
+                    <div id="dice-roll-total" class="dice-total-sum hidden">Total: 18</div>
+                    <div id="dice-formula" class="dice-formula-desc hidden">1d20 + 4</div>
                 </div>
 
-                <!-- Histórico das Últimas Rolagens -->
-                <div class="space-y-2">
-                    <span class="text-[10px] text-rpg-muted uppercase font-bold tracking-wider">Histórico Recente</span>
-                    <div id="roll-log-list" class="max-h-40 overflow-y-auto space-y-1.5 pr-1 text-xs">
-                        <div class="text-rpg-muted italic text-center py-4">Nenhuma rolagem feita ainda.</div>
+                <div>
+                    <span class="form-label" style="display:block; margin-bottom: 0.5rem; font-weight:bold;">Histórico Recente</span>
+                    <div id="roll-log-list" class="history-list">
+                        <div class="history-empty">Nenhuma rolagem feita ainda.</div>
                     </div>
                 </div>
             </section>
 
-            <!-- SALVAMENTOS (TESTES DE RESISTÊNCIA) -->
-            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
-                <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider border-b border-rpg-border pb-2 flex justify-between items-center">
-                    <span>Testes de Resistência</span>
-                    <span class="text-[10px] text-rpg-muted lowercase font-normal">Marque se for proficiente</span>
+            <!-- TESTES DE RESISTÊNCIA -->
+            <section class="card">
+                <h3 class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>Salvamentos</span>
+                    <span class="sub-desc" style="text-transform:lowercase; font-weight:normal;">Selecione proficiências</span>
                 </h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- STR, DEX, CON -->
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
-                            <div class="flex items-center gap-1.5">
-                                <input type="checkbox" id="save-prof-str" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
-                                <button onclick="rollSave('Força', 'str')" class="text-xs font-bold text-left group-hover:text-rpg-accent">FOR</button>
+                <div class="saves-box-container">
+                    <div class="space-y" style="gap:0.75rem;">
+                        <div class="save-item">
+                            <div class="save-item-left">
+                                <input type="checkbox" id="save-prof-str" onchange="updateSavesAndSkills()" class="checkbox-rpg">
+                                <button onclick="rollSave('Força', 'str')">FOR</button>
                             </div>
-                            <span id="save-val-str" class="text-xs font-bold font-serif text-rpg-accent">+4</span>
+                            <span id="save-val-str" class="save-item-value">+4</span>
                         </div>
-                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
-                            <div class="flex items-center gap-1.5">
-                                <input type="checkbox" id="save-prof-des" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
-                                <button onclick="rollSave('Destreza', 'des')" class="text-xs font-bold text-left group-hover:text-rpg-accent">DES</button>
+                        <div class="save-item">
+                            <div class="save-item-left">
+                                <input type="checkbox" id="save-prof-des" onchange="updateSavesAndSkills()" class="checkbox-rpg">
+                                <button onclick="rollSave('Destreza', 'des')">DES</button>
                             </div>
-                            <span id="save-val-des" class="text-xs font-bold font-serif text-rpg-accent">+1</span>
+                            <span id="save-val-des" class="save-item-value">+1</span>
                         </div>
-                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
-                            <div class="flex items-center gap-1.5">
-                                <input type="checkbox" id="save-prof-con" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
-                                <button onclick="rollSave('Constituição', 'con')" class="text-xs font-bold text-left group-hover:text-rpg-accent">CON</button>
+                        <div class="save-item">
+                            <div class="save-item-left">
+                                <input type="checkbox" id="save-prof-con" onchange="updateSavesAndSkills()" class="checkbox-rpg">
+                                <button onclick="rollSave('Constituição', 'con')">CON</button>
                             </div>
-                            <span id="save-val-con" class="text-xs font-bold font-serif text-rpg-accent">+3</span>
+                            <span id="save-val-con" class="save-item-value">+3</span>
                         </div>
                     </div>
-                    <!-- INT, WIS, CHA -->
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
-                            <div class="flex items-center gap-1.5">
-                                <input type="checkbox" id="save-prof-int" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
-                                <button onclick="rollSave('Inteligência', 'int')" class="text-xs font-bold text-left group-hover:text-rpg-accent">INT</button>
+                    <div class="space-y" style="gap:0.75rem;">
+                        <div class="save-item">
+                            <div class="save-item-left">
+                                <input type="checkbox" id="save-prof-int" onchange="updateSavesAndSkills()" class="checkbox-rpg">
+                                <button onclick="rollSave('Inteligência', 'int')">INT</button>
                             </div>
-                            <span id="save-val-int" class="text-xs font-bold font-serif text-rpg-accent">-1</span>
+                            <span id="save-val-int" class="save-item-value">-1</span>
                         </div>
-                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
-                            <div class="flex items-center gap-1.5">
-                                <input type="checkbox" id="save-prof-sab" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
-                                <button onclick="rollSave('Sabedoria', 'sab')" class="text-xs font-bold text-left group-hover:text-rpg-accent">SAB</button>
+                        <div class="save-item">
+                            <div class="save-item-left">
+                                <input type="checkbox" id="save-prof-sab" onchange="updateSavesAndSkills()" class="checkbox-rpg">
+                                <button onclick="rollSave('Sabedoria', 'sab')">SAB</button>
                             </div>
-                            <span id="save-val-sab" class="text-xs font-bold font-serif text-rpg-accent">+0</span>
+                            <span id="save-val-sab" class="save-item-value">+0</span>
                         </div>
-                        <div class="flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40">
-                            <div class="flex items-center gap-1.5">
-                                <input type="checkbox" id="save-prof-car" onchange="updateSavesAndSkills()" class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
-                                <button onclick="rollSave('Carisma', 'car')" class="text-xs font-bold text-left group-hover:text-rpg-accent">CAR</button>
+                        <div class="save-item">
+                            <div class="save-item-left">
+                                <input type="checkbox" id="save-prof-car" onchange="updateSavesAndSkills()" class="checkbox-rpg">
+                                <button onclick="rollSave('Carisma', 'car')">CAR</button>
                             </div>
-                            <span id="save-val-car" class="text-xs font-bold font-serif text-rpg-accent">-1</span>
+                            <span id="save-val-car" class="save-item-value">-1</span>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- PERÍCIAS -->
-            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
-                <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider border-b border-rpg-border pb-2 flex justify-between items-center">
+            <section class="card">
+                <h3 class="card-title" style="display:flex; justify-content:space-between; align-items:center;">
                     <span>Perícias (Skills)</span>
-                    <span class="text-[10px] text-rpg-muted">Toque no nome para Rolar</span>
+                    <span class="sub-desc" style="text-transform:none;">Toque no nome para rolar</span>
                 </h3>
-                <div class="space-y-2 max-h-96 overflow-y-auto pr-2" id="skills-list">
-                    <!-- Inserido dinamicamente via JS -->
+                <div id="skills-list" class="skills-list-wrapper">
+                    <!-- Gerado Dinamicamente -->
                 </div>
             </section>
 
-            <!-- BLOCO DE CARACTERÍSTICAS & HABILIDADES ESPECIAIS (FÚRIA, RESISTÊNCIA ANÃ) -->
-            <section class="bg-rpg-panel border border-rpg-border rounded-xl p-6 space-y-4">
-                <h3 class="font-serif text-base text-rpg-accent uppercase tracking-wider border-b border-rpg-border pb-2 flex items-center gap-2">
-                    Características & Traços
-                </h3>
-                <textarea id="features-text" onchange="updateData('features', this.value)" class="w-full bg-rpg-bg border border-rpg-border focus:border-rpg-accent rounded p-3 text-xs outline-none h-56 resize-none leading-relaxed" placeholder="Adicione habilidades especiais como: Fúria de Bárbaro, Sentido de Perigo, Resiliência Anã, Visão no Escuro, etc."></textarea>
+            <!-- TRAÇOS -->
+            <section class="card">
+                <h3 class="card-title">Características & Traços</h3>
+                <textarea id="features-text" onchange="updateData('features', this.value)" class="textarea-rpg" style="height: 14rem;" placeholder="Características da Raça, Classe, etc."></textarea>
             </section>
 
         </div>
     </main>
 
-    <!-- NOTIFICAÇÃO DO DADO (TOAST FLUTUANTE EM DISPOSITIVOS MÓVEIS) -->
-    <div id="dice-toast" class="fixed bottom-6 right-6 bg-rpg-panel border-2 border-rpg-accent rounded-lg p-4 shadow-2xl z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm hidden">
-        <div class="flex items-center gap-3">
-            <div class="bg-rpg-accent text-rpg-bg font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner" id="toast-dice-result">
-                20
-            </div>
-            <div>
-                <h4 class="font-bold text-xs uppercase tracking-wider text-rpg-muted" id="toast-dice-title">Rolagem de d20</h4>
-                <p class="text-sm font-black text-emerald-400" id="toast-dice-total">Total: 24</p>
-                <p class="text-[HGHH10px] text-rpg-muted italic" id="toast-dice-formula">20 + 4 (Força)</p>
+    <!-- TOAST DE NOTIFICAÇÃO -->
+    <div id="dice-toast" class="toast">
+        <div class="toast-content">
+            <div id="toast-dice-result" class="toast-dice-graphic">20</div>
+            <div class="toast-text">
+                <h4 id="toast-dice-title">Rolagem</h4>
+                <p id="toast-dice-total" class="total-text">Total: 24</p>
+                <p id="toast-dice-formula" class="formula-text">1d20 + 4</p>
             </div>
         </div>
     </div>
 
-    <!-- CODE LOGIC (JS) -->
+    <!-- LOGIC (JS) -->
     <script>
-        // --- 1. CONFIGURAÇÕES & DADOS DO PERSONAGEM (D&D 5E TEMPLATE COM DADOS DO USUÁRIO) ---
+        // --- 1. CONFIGURAÇÕES & DADOS DO PERSONAGEM (TEMPLATE INTEGRADO) ---
         const DEFAULT_SHEET = {
-            name: "nome do personagem",
+            name: "Pequeno fumaça em pó",
             class: "Bárbaro",
             level: 1,
             race: "Anão",
-            player: "Nome do Jogador",
+            player: "Italo",
             background: "Herói do Povo",
             alignment: "Caótico e Neutro",
-            ac: 15, // Armadura natural/bárbara ou escudos
+            ac: 15,
             speed: "9",
             hitDiceCurrent: "1",
             hitDiceTotal: "1d12",
@@ -576,7 +1537,7 @@
                 car: 8
             },
             saveProfs: {
-                str: true, // Bárbaro tem proficiência em Força e Constituição
+                str: true,
                 des: false,
                 con: true,
                 int: false,
@@ -621,14 +1582,13 @@
 
         let currentSheet = {};
 
-        // --- 2. WEB AUDIO API - EFEITO DE SOM DE DADO SINTETIZADO ---
+        // --- 2. WEB AUDIO API ---
         function playDiceSound() {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (!AudioContext) return;
                 const ctx = new AudioContext();
                 
-                // Simula 3 a 4 pequenos barulhos de chacoalhar do dado
                 for (let i = 0; i < 4; i++) {
                     const delay = i * 0.12;
                     const osc = ctx.createOscillator();
@@ -647,22 +1607,20 @@
                     osc.stop(ctx.currentTime + delay + 0.08);
                 }
             } catch (e) {
-                console.log("Audio not allowed / error: ", e);
+                console.log("Audio not allowed: ", e);
             }
         }
 
-        // --- 3. INICIALIZAÇÃO DA FICHA ---
+        // --- 3. INICIALIZAÇÃO ---
         window.onload = function() {
             loadSheet();
         }
 
         function loadSheet() {
-            // const saved = localStorage.getItem('rpg_character_sheet_data');
-            const saved = sessionStorage.getItem('rpg_character_sheet_data');
+            const saved = localStorage.getItem('rpg_character_sheet_data_css');
             if (saved) {
                 try {
                     currentSheet = JSON.parse(saved);
-                    // Garantir compatibilidade com novos campos se existirem
                     currentSheet = { ...DEFAULT_SHEET, ...currentSheet };
                 } catch (e) {
                     currentSheet = JSON.parse(JSON.stringify(DEFAULT_SHEET));
@@ -674,13 +1632,11 @@
         }
 
         function saveSheetToStorage() {
-            // localStorage.setItem('rpg_character_sheet_data', JSON.stringify(currentSheet));
-            sessionStorage.setItem('rpg_character_sheet_data', JSON.stringify(currentSheet));
+            localStorage.setItem('rpg_character_sheet_data_css', JSON.stringify(currentSheet));
         }
 
-        // --- 4. RENDERIZAÇÃO DA PÁGINA COM DADOS ---
+        // --- 4. RENDERIZAÇÃO GERAL ---
         function renderAll() {
-            // Inputs Textos Gerais
             document.getElementById('char-name').value = currentSheet.name;
             document.getElementById('char-class').value = currentSheet.class;
             document.getElementById('char-level').value = currentSheet.level;
@@ -689,72 +1645,59 @@
             document.getElementById('char-background').value = currentSheet.background;
             document.getElementById('char-alignment').value = currentSheet.alignment;
 
-            // Combat stats
             document.getElementById('combat-ac').value = currentSheet.ac;
             document.getElementById('combat-speed').value = currentSheet.speed;
             document.getElementById('combat-hitdice-current').value = currentSheet.hitDiceCurrent;
             document.getElementById('combat-hitdice-total').value = currentSheet.hitDiceTotal;
 
-            // Atributos
             for (let stat in currentSheet.stats) {
                 document.getElementById(`val-${stat}`).value = currentSheet.stats[stat];
             }
 
-            // Moedas
             document.getElementById('coin-pc').value = currentSheet.coins.pc;
             document.getElementById('coin-pp').value = currentSheet.coins.pp;
             document.getElementById('coin-pe').value = currentSheet.coins.pe;
             document.getElementById('coin-po').value = currentSheet.coins.po;
             document.getElementById('coin-pl').value = currentSheet.coins.pl;
 
-            // Textareas
             document.getElementById('equipment-text').value = currentSheet.equipment;
             document.getElementById('prof-langs-text').value = currentSheet.profAndLangs;
             document.getElementById('features-text').value = currentSheet.features;
 
-            // Checkbox Saves
             for (let save in currentSheet.saveProfs) {
                 document.getElementById(`save-prof-${save}`).checked = currentSheet.saveProfs[save];
             }
 
-            // Vida
             document.getElementById('hp-current').value = currentSheet.hp.current;
             document.getElementById('hp-max').value = currentSheet.hp.max;
             document.getElementById('hp-temp').value = currentSheet.hp.temp || 0;
 
-            // Death saves
             for (let i = 1; i <= 3; i++) {
                 document.getElementById(`death-success-${i}`).checked = currentSheet.deathSaves.successes[i-1];
                 document.getElementById(`death-fail-${i}`).checked = currentSheet.deathSaves.failures[i-1];
             }
 
-            // Atualizar os cálculos dinâmicos dependentes
             recalculateAll();
         }
 
         function recalculateAll() {
-            // Nível e Proficiência
             const level = parseInt(currentSheet.level) || 1;
             const profBonus = Math.ceil(level / 4) + 1;
             document.getElementById('prof-bonus').textContent = `+${profBonus}`;
 
-            // Calcular modificadores
             const mods = {};
             for (let stat in currentSheet.stats) {
                 const val = parseInt(currentSheet.stats[stat]) || 10;
                 const mod = Math.floor((val - 10) / 2);
                 mods[stat] = mod;
                 
-                // Renderizar mod de Atributo
                 const sign = mod >= 0 ? '+' : '';
                 document.getElementById(`mod-${stat}`).textContent = `${sign}${mod}`;
             }
 
-            // Atualizar Iniciativa baseada em DES
             const initSign = mods.des >= 0 ? '+' : '';
             document.getElementById('combat-init').textContent = `${initSign}${mods.des}`;
 
-            // Atualizar Salvamentos (Testes de Resistência)
             for (let stat in currentSheet.saveProfs) {
                 let totalSave = mods[stat];
                 if (currentSheet.saveProfs[stat]) {
@@ -764,21 +1707,17 @@
                 document.getElementById(`save-val-${stat}`).textContent = `${saveSign}${totalSave}`;
             }
 
-            // Barra de vida
             const currentHP = parseInt(currentSheet.hp.current) || 0;
             const maxHP = parseInt(currentSheet.hp.max) || 1;
             const tempHP = parseInt(currentSheet.hp.temp) || 0;
             const percent = Math.min(100, Math.max(0, ((currentHP + tempHP) / maxHP) * 100));
             document.getElementById('hp-bar').style.width = `${percent}%`;
 
-            // Atualizar Lista de Perícias
             renderSkills(mods, profBonus);
-
-            // Atualizar Lista de Armas
             renderWeapons();
         }
 
-        // --- 5. RENDER DINÂMICO DE PERÍCIAS ---
+        // --- 5. COMPONENTES DINÂMICOS ---
         function renderSkills(mods, profBonus) {
             const container = document.getElementById('skills-list');
             container.innerHTML = '';
@@ -791,53 +1730,51 @@
                 const sign = totalBonus >= 0 ? '+' : '';
 
                 const div = document.createElement('div');
-                div.className = "flex items-center justify-between bg-rpg-bg p-2 rounded border border-rpg-border/40 group hover:border-rpg-accent/40 transition text-xs";
+                div.className = "save-item";
                 div.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <input type="checkbox" onchange="toggleSkillProf('${skillKey}')" ${isProf ? 'checked' : ''} class="w-4 h-4 rounded bg-rpg-bg border-rpg-border accent-rpg-accent">
-                        <button onclick="rollSkill('${skill.name}', ${totalBonus}, '${skill.stat.toUpperCase()}')" class="font-semibold text-left group-hover:text-rpg-accent transition">
-                            ${skill.name} <span class="text-[9px] text-rpg-muted font-normal">(${skill.stat.toUpperCase()})</span>
+                    <div class="save-item-left">
+                        <input type="checkbox" onchange="toggleSkillProf('${skillKey}')" ${isProf ? 'checked' : ''} class="checkbox-rpg">
+                        <button onclick="rollSkill('${skill.name}', ${totalBonus}, '${skill.stat.toUpperCase()}')">
+                            ${skill.name} <span style="font-size: 8px; color: var(--color-muted); font-weight: normal;">(${skill.stat.toUpperCase()})</span>
                         </button>
                     </div>
-                    <span class="font-serif font-bold text-rpg-accent">${sign}${totalBonus}</span>
+                    <span class="save-item-value">${sign}${totalBonus}</span>
                 `;
                 container.appendChild(div);
             }
         }
 
-        // --- 6. RENDER DINÂMICO DE ARMAS / ATAQUES ---
         function renderWeapons() {
             const container = document.getElementById('weapons-list');
             container.innerHTML = '';
 
             if (currentSheet.weapons.length === 0) {
-                container.innerHTML = `<tr><td colspan="4" class="text-center text-rpg-muted py-4 italic">Nenhuma arma adicionada.</td></tr>`;
+                container.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--color-muted); padding: 1.5rem 0; font-style: italic;">Nenhuma arma adicionada.</td></tr>`;
                 return;
             }
 
             currentSheet.weapons.forEach((weapon, index) => {
                 const tr = document.createElement('tr');
-                tr.className = "border-b border-rpg-border/50 hover:bg-rpg-bg/30 transition";
                 tr.innerHTML = `
-                    <td class="py-2.5">
-                        <div class="flex items-center gap-2">
-                            <button onclick="deleteWeapon(${index})" class="text-xs text-rpg-danger hover:underline">✕</button>
-                            <input type="text" value="${weapon.name}" onchange="editWeapon(${index}, 'name', this.value)" class="bg-transparent border-b border-transparent hover:border-rpg-border focus:border-rpg-accent text-rpg-text focus:outline-none w-full text-xs">
+                    <td>
+                        <div class="weapon-name-cell">
+                            <button onclick="deleteWeapon(${index})" class="btn-delete-weapon">✕</button>
+                            <input type="text" value="${weapon.name}" onchange="editWeapon(${index}, 'name', this.value)" class="weapon-input-inline" style="font-weight: bold;">
                         </div>
                     </td>
-                    <td class="py-2.5 text-center">
-                        <input type="text" value="${weapon.bonusAtk}" onchange="editWeapon(${index}, 'bonusAtk', this.value)" class="bg-transparent text-center border-b border-transparent hover:border-rpg-border focus:border-rpg-accent text-rpg-text focus:outline-none w-12 text-xs">
+                    <td style="text-align:center; width: 4.5rem;">
+                        <input type="text" value="${weapon.bonusAtk}" onchange="editWeapon(${index}, 'bonusAtk', this.value)" class="weapon-input-inline" style="text-align:center;">
                     </td>
-                    <td class="py-2.5 text-center">
-                        <div class="flex items-center justify-center gap-1">
-                            <input type="text" value="${weapon.damage}" onchange="editWeapon(${index}, 'damage', this.value)" class="bg-transparent text-center border-b border-transparent hover:border-rpg-border focus:border-rpg-accent text-rpg-text focus:outline-none w-16 text-xs font-bold">
-                            <input type="text" value="${weapon.damageType}" onchange="editWeapon(${index}, 'damageType', this.value)" class="bg-transparent text-center border-b border-transparent hover:border-rpg-border focus:border-rpg-accent text-rpg-muted focus:outline-none w-16 text-[10px]">
+                    <td style="text-align:center;">
+                        <div style="display:flex; justify-content:center; gap:0.25rem;">
+                            <input type="text" value="${weapon.damage}" onchange="editWeapon(${index}, 'damage', this.value)" class="weapon-input-inline" style="text-align:center; font-weight: bold; width: 3.5rem;">
+                            <input type="text" value="${weapon.damageType}" onchange="editWeapon(${index}, 'damageType', this.value)" class="weapon-input-inline" style="text-align:center; color: var(--color-muted); font-size: 9px; width: 3.5rem;">
                         </div>
                     </td>
-                    <td class="py-2.5 text-right">
-                        <div class="flex justify-end gap-1.5">
-                            <button onclick="rollWeaponAtk('${weapon.name}', '${weapon.bonusAtk}')" class="px-2 py-1 bg-rpg-bg hover:bg-rpg-accent hover:text-rpg-bg text-[10px] rounded font-bold border border-rpg-border transition">Atacar</button>
-                            <button onclick="rollWeaponDamage('${weapon.name}', '${weapon.damage}')" class="px-2 py-1 bg-rpg-bg hover:bg-emerald-600 hover:text-white text-[10px] rounded font-bold border border-rpg-border transition">Dano</button>
+                    <td style="text-align:right; width: 6.5rem;">
+                        <div class="weapon-actions-cell">
+                            <button onclick="rollWeaponAtk('${weapon.name}', '${weapon.bonusAtk}')" class="btn-roll-weapon">Atacar</button>
+                            <button onclick="rollWeaponDamage('${weapon.name}', '${weapon.damage}')" class="btn-roll-weapon btn-roll-damage">Dano</button>
                         </div>
                     </td>
                 `;
@@ -845,7 +1782,7 @@
             });
         }
 
-        // --- 7. MÉTODOS DE EDIÇÃO DE ESTADO ---
+        // --- 6. ATUALIZAÇÕES DE ESTADO ---
         function updateData(key, value) {
             currentSheet[key] = value;
             saveSheetToStorage();
@@ -933,17 +1870,16 @@
             recalculateAll();
         }
 
-        // --- 8. SISTEMA DE ROLAGEM DE DADOS (COM SONS & ANIMAÇÃO) ---
+        // --- 7. ROLADOR DE DADOS (CÁLCULOS & SONS) ---
         let rollHistory = [];
 
         function executeRollAnimation(label, modifier, callback) {
             playDiceSound();
             const diceGraphic = document.getElementById('dice-graphic');
             const resultVal = document.getElementById('dice-result-val');
-            const diceLabel = document.getElementById('dice-label');
             
             diceGraphic.classList.remove('rolling-dice');
-            void diceGraphic.offsetWidth; // Trigger reflow
+            void diceGraphic.offsetWidth; // Force Reflow
             diceGraphic.classList.add('rolling-dice');
 
             let spins = 0;
@@ -965,18 +1901,29 @@
 
             const timestamp = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             
-            const natClass = naturalRoll === 20 ? 'text-emerald-400 font-extrabold' : (naturalRoll === 1 ? 'text-red-500 font-extrabold' : 'text-rpg-muted');
-            const bonusText = naturalRoll === 20 ? ' (Crítico!)' : (naturalRoll === 1 ? ' (Falha Crítica!)' : '');
+            const isCrit = naturalRoll === 20;
+            const isFumble = naturalRoll === 1;
+            
+            let natClass = '';
+            let bonusText = '';
+            
+            if (isCrit) {
+                natClass = 'style="color: #34d399; font-weight: bold;"';
+                bonusText = ' (Crítico!)';
+            } else if (isFumble) {
+                natClass = 'style="color: var(--color-danger); font-weight: bold;"';
+                bonusText = ' (Falha Crítica!)';
+            }
 
             const entryHtml = `
-                <div class="bg-rpg-bg p-2 rounded border border-rpg-border/60 hover:border-rpg-accent/30 transition text-xs flex flex-col justify-between">
-                    <div class="flex justify-between items-center text-[10px]">
-                        <span class="font-bold text-rpg-accent uppercase">${title}</span>
-                        <span class="text-[9px] text-rpg-muted">${timestamp}</span>
+                <div class="log-entry">
+                    <div class="log-entry-header">
+                        <span class="log-entry-title">${title}</span>
+                        <span class="log-entry-time">${timestamp}</span>
                     </div>
-                    <div class="flex justify-between items-end mt-1">
-                        <span class="text-[10px] text-rpg-muted italic">${formula} <span class="${natClass}">[d20: ${naturalRoll}${bonusText}]</span></span>
-                        <span class="text-sm font-black text-emerald-400">${total}</span>
+                    <div class="log-entry-body">
+                        <span class="log-entry-formula">${formula} <span ${natClass}>[d20: ${naturalRoll}${bonusText}]</span></span>
+                        <span class="log-entry-total">${total}</span>
                     </div>
                 </div>
             `;
@@ -984,7 +1931,6 @@
             list.insertAdjacentHTML('afterbegin', entryHtml);
             rollHistory.unshift({ title, formula, total, naturalRoll });
 
-            // Mostrar toast flutuante (Mobile Friendly)
             showToast(title, total, formula, naturalRoll);
         }
 
@@ -1000,25 +1946,23 @@
             tTotal.textContent = `Total: ${total}`;
             tFormula.textContent = formula;
 
-            // Cores baseadas em crítico
+            // Cores do crítico / erro no toast
             if (naturalRoll === 20) {
-                tResult.className = "bg-emerald-500 text-rpg-bg font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner animate-bounce";
+                tResult.style.backgroundColor = "#10b981";
+                tResult.style.color = "#ffffff";
             } else if (naturalRoll === 1) {
-                tResult.className = "bg-rose-500 text-white font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner";
+                tResult.style.backgroundColor = "var(--color-danger)";
+                tResult.style.color = "#ffffff";
             } else {
-                tResult.className = "bg-rpg-accent text-rpg-bg font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner";
+                tResult.style.backgroundColor = "var(--color-accent)";
+                tResult.style.color = "var(--color-bg)";
             }
 
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.remove('opacity-0', 'translate-y-20');
-            }, 50);
+            toast.classList.add('show');
 
-            // Hide after 4 seconds
             clearTimeout(window.toastTimeout);
             window.toastTimeout = setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-20');
-                setTimeout(() => toast.classList.add('hidden'), 300);
+                toast.classList.remove('show');
             }, 4000);
         }
 
@@ -1032,10 +1976,14 @@
                 
                 document.getElementById('dice-result-val').textContent = roll;
                 document.getElementById('dice-label').textContent = statName;
-                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
-                document.getElementById('dice-roll-total').classList.remove('hidden');
-                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${mod} (${statName})`;
-                document.getElementById('dice-formula').classList.remove('hidden');
+                
+                const totalEl = document.getElementById('dice-roll-total');
+                totalEl.textContent = `Total: ${total}`;
+                totalEl.classList.remove('hidden');
+                
+                const formulaEl = document.getElementById('dice-formula');
+                formulaEl.textContent = `1d20 ${sign} ${mod} (${statName})`;
+                formulaEl.classList.remove('hidden');
 
                 addLogEntry(`Atributo: ${statName}`, `1d20 ${sign}${mod}`, total, roll);
             });
@@ -1057,10 +2005,14 @@
 
                 document.getElementById('dice-result-val').textContent = roll;
                 document.getElementById('dice-label').textContent = `Salvar ${statName}`;
-                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
-                document.getElementById('dice-roll-total').classList.remove('hidden');
-                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${totalMod}`;
-                document.getElementById('dice-formula').classList.remove('hidden');
+                
+                const totalEl = document.getElementById('dice-roll-total');
+                totalEl.textContent = `Total: ${total}`;
+                totalEl.classList.remove('hidden');
+                
+                const formulaEl = document.getElementById('dice-formula');
+                formulaEl.textContent = `1d20 ${sign} ${totalMod}`;
+                formulaEl.classList.remove('hidden');
 
                 addLogEntry(`Salvamento: ${statName}`, `1d20 ${sign}${totalMod}`, total, roll);
             });
@@ -1074,10 +2026,14 @@
 
                 document.getElementById('dice-result-val').textContent = roll;
                 document.getElementById('dice-label').textContent = skillName;
-                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
-                document.getElementById('dice-roll-total').classList.remove('hidden');
-                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${bonusValue} (${attr})`;
-                document.getElementById('dice-formula').classList.remove('hidden');
+                
+                const totalEl = document.getElementById('dice-roll-total');
+                totalEl.textContent = `Total: ${total}`;
+                totalEl.classList.remove('hidden');
+                
+                const formulaEl = document.getElementById('dice-formula');
+                formulaEl.textContent = `1d20 ${sign} ${bonusValue} (${attr})`;
+                formulaEl.classList.remove('hidden');
 
                 addLogEntry(`Perícia: ${skillName}`, `1d20 ${sign}${bonusValue}`, total, roll);
             });
@@ -1093,10 +2049,14 @@
 
                 document.getElementById('dice-result-val').textContent = roll;
                 document.getElementById('dice-label').textContent = "Iniciativa";
-                document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
-                document.getElementById('dice-roll-total').classList.remove('hidden');
-                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${mod} (Iniciativa)`;
-                document.getElementById('dice-formula').classList.remove('hidden');
+                
+                const totalEl = document.getElementById('dice-roll-total');
+                totalEl.textContent = `Total: ${total}`;
+                totalEl.classList.remove('hidden');
+                
+                const formulaEl = document.getElementById('dice-formula');
+                formulaEl.textContent = `1d20 ${sign} ${mod} (Iniciativa)`;
+                formulaEl.classList.remove('hidden');
 
                 addLogEntry("Iniciativa", `1d20 ${sign}${mod}`, total, roll);
             });
@@ -1124,10 +2084,14 @@
 
                     document.getElementById('dice-result-val').textContent = roll;
                     document.getElementById('dice-label').textContent = "Dados de Vida (d12)";
-                    document.getElementById('dice-roll-total').textContent = `Total: ${total}`;
-                    document.getElementById('dice-roll-total').classList.remove('hidden');
-                    document.getElementById('dice-formula').textContent = `1d12 + ${modCon} (CON)`;
-                    document.getElementById('dice-formula').classList.remove('hidden');
+                    
+                    const totalEl = document.getElementById('dice-roll-total');
+                    totalEl.textContent = `Total: ${total}`;
+                    totalEl.classList.remove('hidden');
+                    
+                    const formulaEl = document.getElementById('dice-formula');
+                    formulaEl.textContent = `1d12 + ${modCon} (CON)`;
+                    formulaEl.classList.remove('hidden');
 
                     addLogEntry("Dado de Vida (d12)", `1d12 + ${modCon}`, total, roll);
                 }
@@ -1135,7 +2099,6 @@
         }
 
         function rollWeaponAtk(weaponName, bonusText) {
-            // Analisa o bônus de ataque (Ex: "+6" ou "-1" ou "6")
             const bonus = parseInt(bonusText.replace('+', '')) || 0;
             executeRollAnimation(`${weaponName} (Ataque)`, bonus, () => {
                 const roll = Math.floor(Math.random() * 20) + 1;
@@ -1144,10 +2107,14 @@
 
                 document.getElementById('dice-result-val').textContent = roll;
                 document.getElementById('dice-label').textContent = "Ataque " + weaponName;
-                document.getElementById('dice-roll-total').textContent = `Total Atq: ${total}`;
-                document.getElementById('dice-roll-total').classList.remove('hidden');
-                document.getElementById('dice-formula').textContent = `1d20 ${sign} ${bonus}`;
-                document.getElementById('dice-formula').classList.remove('hidden');
+                
+                const totalEl = document.getElementById('dice-roll-total');
+                totalEl.textContent = `Total Atq: ${total}`;
+                totalEl.classList.remove('hidden');
+                
+                const formulaEl = document.getElementById('dice-formula');
+                formulaEl.textContent = `1d20 ${sign} ${bonus}`;
+                formulaEl.classList.remove('hidden');
 
                 addLogEntry(`Ataque: ${weaponName}`, `1d20 ${sign}${bonus}`, total, roll);
             });
@@ -1155,11 +2122,10 @@
 
         function rollWeaponDamage(weaponName, damageFormula) {
             playDiceSound();
-            // Suporta fórmulas de dano simples como "1d8+4", "2d6+3", "1d12"
             try {
                 const cleanFormula = damageFormula.replace(/\s+/g, '').toLowerCase();
                 const parts = cleanFormula.split(/([+-])/);
-                const dicePart = parts[0]; // e.g. "1d8"
+                const dicePart = parts[0]; 
                 const diceSplit = dicePart.split('d');
                 const numDice = parseInt(diceSplit[0]) || 1;
                 const diceSides = parseInt(diceSplit[1]) || 6;
@@ -1195,47 +2161,50 @@
 
                         document.getElementById('dice-result-val').textContent = total;
                         document.getElementById('dice-label').textContent = "Dano " + weaponName;
-                        document.getElementById('dice-roll-total').textContent = `${total} Dano`;
-                        document.getElementById('dice-roll-total').classList.remove('hidden');
-                        document.getElementById('dice-formula').textContent = `Rolagens: [${rolls.join(', ')}] ${modifier !== 0 ? sign + modifier : ''}`;
-                        document.getElementById('dice-formula').classList.remove('hidden');
+                        
+                        const totalEl = document.getElementById('dice-roll-total');
+                        totalEl.textContent = `${total} Dano`;
+                        totalEl.classList.remove('hidden');
+                        
+                        const formulaEl = document.getElementById('dice-formula');
+                        formulaEl.textContent = `Rolagens: [${rolls.join(', ')}] ${modifier !== 0 ? sign + modifier : ''}`;
+                        formulaEl.classList.remove('hidden');
 
-                        // No log de rolagem
                         const list = document.getElementById('roll-log-list');
                         if (rollHistory.length === 0) list.innerHTML = '';
                         const timestamp = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                        
                         const entryHtml = `
-                            <div class="bg-rpg-bg p-2 rounded border border-emerald-500/30 hover:border-emerald-500/50 transition text-xs flex flex-col justify-between">
-                                <div class="flex justify-between items-center text-[10px]">
-                                    <span class="font-bold text-emerald-400 uppercase">Dano: ${weaponName}</span>
-                                    <span class="text-[9px] text-rpg-muted">${timestamp}</span>
+                            <div class="log-entry" style="border-color: rgba(16, 185, 129, 0.3);">
+                                <div class="log-entry-header">
+                                    <span class="log-entry-title" style="color: #34d399;">Dano: ${weaponName}</span>
+                                    <span class="log-entry-time">${timestamp}</span>
                                 </div>
-                                <div class="flex justify-between items-end mt-1">
-                                    <span class="text-[10px] text-rpg-muted italic">${damageFormula} (Dados: ${rolls.join('+')})</span>
-                                    <span class="text-sm font-black text-emerald-400">${total}</span>
+                                <div class="log-entry-body">
+                                    <span class="log-entry-formula">${damageFormula} (Dados: ${rolls.join('+')})</span>
+                                    <span class="log-entry-total" style="color: #34d399;">${total}</span>
                                 </div>
                             </div>
                         `;
                         list.insertAdjacentHTML('afterbegin', entryHtml);
                         rollHistory.unshift({ title: `Dano: ${weaponName}`, formula: damageFormula, total, naturalRoll: diceTotal });
                         
-                        // Mostrar Toast
                         showToast(`Dano: ${weaponName}`, `${total} (${cleanFormula})`, `Dados: ${rolls.join('+')} ${modifier !== 0 ? sign + modifier : ''}`, total);
                     }
                 }, 70);
             } catch (err) {
-                alert("Erro ao ler fórmula de dano. Use formatos como '1d8+4', '2d6', etc.");
+                showCustomMessage("Erro", "Formato de dano inválido. Use '1d8+4', '2d6', etc.");
             }
         }
 
         function clearRollLog() {
             rollHistory = [];
             document.getElementById('roll-log-list').innerHTML = `
-                <div class="text-rpg-muted italic text-center py-4">Nenhuma rolagem feita ainda.</div>
+                <div class="history-empty">Nenhuma rolagem feita ainda.</div>
             `;
         }
 
-        // --- 9. IMPORTAÇÃO / EXPORTAÇÃO & RESET ---
+        // --- 8. IMPORTAÇÃO / EXPORTAÇÃO ---
         function exportSheet() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentSheet, null, 2));
             const dlAnchorElem = document.createElement('a');
@@ -1264,14 +2233,14 @@
         }
 
         function resetToDefault() {
-            if (confirm("Tem certeza que deseja reiniciar para a ficha padrão de Pequeno Fumaça? Isso apagará as modificações atuais.")) {
+            const confirmReset = document.createElement('div');
+            if (confirm("Tem certeza que deseja reiniciar para a ficha padrão de Pequeno Fumaça? Isso apagará as modificações locais.")) {
                 currentSheet = JSON.parse(JSON.stringify(DEFAULT_SHEET));
                 saveSheetToStorage();
                 renderAll();
             }
         }
 
-        // Modal Customizado para Avisos/Mensagens
         function showCustomMessage(title, text) {
             const toast = document.getElementById('dice-toast');
             const tResult = document.getElementById('toast-dice-result');
@@ -1280,20 +2249,17 @@
             const tFormula = document.getElementById('toast-dice-formula');
 
             tResult.textContent = "i";
-            tResult.className = "bg-rpg-accent text-rpg-bg font-black rounded-full w-10 h-10 flex items-center justify-center text-lg shadow-inner";
+            tResult.style.backgroundColor = "var(--color-accent)";
+            tResult.style.color = "var(--color-bg)";
             tTitle.textContent = title;
             tTotal.textContent = text;
-            tFormula.textContent = "D&D 5e";
+            tFormula.textContent = "Mensagem do Sistema";
 
-            toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.remove('opacity-0', 'translate-y-20');
-            }, 50);
+            toast.classList.add('show');
 
             clearTimeout(window.toastTimeout);
             window.toastTimeout = setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-20');
-                setTimeout(() => toast.classList.add('hidden'), 300);
+                toast.classList.remove('show');
             }, 4000);
         }
     </script>
